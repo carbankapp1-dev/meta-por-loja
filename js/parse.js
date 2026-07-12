@@ -8,7 +8,7 @@ function lerPlanilha(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const wb = XLSX.read(e.target.result, { type: "array" });
+        const wb = XLSX.read(e.target.result, { type: "array", cellDates: true });
         const primeiraAba = wb.SheetNames[0];
         const linhas = XLSX.utils.sheet_to_json(wb.Sheets[primeiraAba], { header: 1, raw: true, defval: null });
         resolve(linhas);
@@ -19,6 +19,18 @@ function lerPlanilha(file) {
     reader.onerror = reject;
     reader.readAsArrayBuffer(file);
   });
+}
+
+const MESES_ABREV_PT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+/** Formata o valor da coluna "MÊS" da planilha de produção, ex: "Abr/26". */
+function formatarMes(valor) {
+  if (valor instanceof Date && !isNaN(valor)) {
+    const mes = MESES_ABREV_PT[valor.getUTCMonth()];
+    const ano = String(valor.getUTCFullYear()).slice(-2);
+    return `${mes}/${ano}`;
+  }
+  return String(valor ?? "").trim();
 }
 
 /** Acha o índice de uma coluna pelo nome do cabeçalho (case/acentos flexível). */
@@ -95,10 +107,12 @@ function processarPlanilhaLojas(linhas) {
 
 /**
  * Planilhas de produção (Potencial / M1 / Novo Mês)
- * Coluna B = "DN - NOME" (texto para coluna) | Gravames Mercado | Contratos
+ * Coluna A = Mês de referência | Coluna B = "DN - NOME" (texto para coluna) | Gravames Mercado | Contratos
+ * Devolve { linhas, mes } — mes é o rótulo (ex: "Jun/26") lido da coluna A.
  */
 function processarPlanilhaProducao(linhas) {
   const cabecalho = linhas[0];
+  const iMes = acharColuna(cabecalho, "MÊS", "MES");
   const iDealer = acharColuna(cabecalho, "DEALER");
   const iGravames = acharColuna(cabecalho, "Gravames Mercado");
   const iContratos = acharColuna(cabecalho, "Contratos");
@@ -108,6 +122,7 @@ function processarPlanilhaProducao(linhas) {
   }
 
   const resultado = [];
+  let mes = "";
   let vaziasSeguidas = 0;
   // Planilhas de produção costumam ter formatação aplicada até milhões de
   // linhas em branco; paramos depois de um bloco longo sem dados reais.
@@ -123,13 +138,16 @@ function processarPlanilhaProducao(linhas) {
     vaziasSeguidas = 0;
     const dn = extrairDN(linha[iDealer]);
     if (dn === null) continue;
+    if (!mes && iMes !== -1 && linha[iMes]) {
+      mes = formatarMes(linha[iMes]);
+    }
     resultado.push({
       dn,
       gravames_mercado: iGravames !== -1 ? (Number(linha[iGravames]) || 0) : null,
       contratos: iContratos !== -1 ? (Number(linha[iContratos]) || 0) : null,
     });
   }
-  return resultado;
+  return { linhas: resultado, mes };
 }
 
 /** Monta as linhas prontas para o upload "Potencial" (gravames + classificação). */

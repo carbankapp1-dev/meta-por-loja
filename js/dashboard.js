@@ -1,5 +1,5 @@
 // ==========================================================================
-// Tabela do painel: carregar, filtrar e editar Meta
+// Tabela do painel: carregar, ordenar, filtrar, somar e editar Meta
 // ==========================================================================
 
 let LOJAS_CACHE = [];
@@ -9,18 +9,42 @@ async function carregarLojas() {
   const corpo = document.getElementById("tabela-corpo");
   corpo.innerHTML = `<tr><td colspan="9" class="carregando">Carregando...</td></tr>`;
 
-  const { data, error } = await supabaseClient.rpc("fn_get_lojas", {
-    p_nome: sessao.nome,
-    p_senha: sessao.senha,
-  });
+  const TAMANHO_PAGINA = 1000; // limite padrão do Supabase por requisição
+  let todas = [];
+  let pagina = 0;
 
-  if (error) {
+  try {
+    while (true) {
+      const de = pagina * TAMANHO_PAGINA;
+      const ate = de + TAMANHO_PAGINA - 1;
+      const { data, error } = await supabaseClient
+        .rpc("fn_get_lojas", { p_nome: sessao.nome, p_senha: sessao.senha })
+        .range(de, ate);
+
+      if (error) throw error;
+
+      todas = todas.concat(data || []);
+      if (!data || data.length < TAMANHO_PAGINA) break;
+      pagina++;
+    }
+  } catch (error) {
     corpo.innerHTML = `<tr><td colspan="9" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
     return;
   }
 
-  LOJAS_CACHE = data || [];
-  renderizarTabela(LOJAS_CACHE);
+  ordenarLojas(todas);
+  LOJAS_CACHE = todas;
+  atualizarMesesCabecalho();
+  atualizarTabela();
+}
+
+/** Ordena por GCM (crescente) e, dentro do mesmo GCM, por Nome da Loja (crescente). */
+function ordenarLojas(lojas) {
+  lojas.sort((a, b) => {
+    const porGcm = String(a.gcm || "").localeCompare(String(b.gcm || ""), "pt-BR", { sensitivity: "base" });
+    if (porGcm !== 0) return porGcm;
+    return String(a.nome_loja || "").localeCompare(String(b.nome_loja || ""), "pt-BR", { sensitivity: "base" });
+  });
 }
 
 function formatarNumero(valor) {
@@ -41,12 +65,61 @@ function classePotencial(potencial) {
   return mapa[potencial] || "";
 }
 
+/** Vermelho: M3, M2 e M1 zerados. Amarelo: só 1 dos 3 meses com produção. 2 ou 3 meses: normal. */
 function classeLinha(loja) {
   const m3 = Number(loja.m3) || 0;
   const m2 = Number(loja.m2) || 0;
   const m1 = Number(loja.m1) || 0;
-  if (m3 === 0 && m2 === 0 && m1 === 0) return "linha-zerada";
-  return "linha-atencao";
+  const mesesComProducao = [m3, m2, m1].filter((v) => v > 0).length;
+  if (mesesComProducao === 0) return "linha-zerada";
+  if (mesesComProducao === 1) return "linha-atencao";
+  return "";
+}
+
+/** Atualiza o rótulo de mês (ex: "Abr/26") no cabeçalho de M3/M2/M1, a partir dos dados carregados. */
+function atualizarMesesCabecalho() {
+  const acharMes = (campo) => {
+    const loja = LOJAS_CACHE.find((l) => l[campo]);
+    return loja ? loja[campo] : "";
+  };
+  document.getElementById("mes-m3").textContent = acharMes("mes_m3");
+  document.getElementById("mes-m2").textContent = acharMes("mes_m2");
+  document.getElementById("mes-m1").textContent = acharMes("mes_m1");
+}
+
+/** Soma M3/M2/M1/Meta da lista exibida (após filtros) e escreve nos cabeçalhos. */
+function atualizarSomasCabecalho(lojas) {
+  const soma = (campo) => lojas.reduce((total, l) => total + (Number(l[campo]) || 0), 0);
+  document.getElementById("soma-m3").textContent = formatarNumero(soma("m3"));
+  document.getElementById("soma-m2").textContent = formatarNumero(soma("m2"));
+  document.getElementById("soma-m1").textContent = formatarNumero(soma("m1"));
+  document.getElementById("soma-meta").textContent = formatarNumero(soma("meta"));
+}
+
+/** Combina filtros de coluna + busca de texto e devolve a lista a ser exibida. */
+function obterLinhasExibidas() {
+  let linhas = aplicarFiltrosColuna(LOJAS_CACHE);
+
+  const termo = document.getElementById("filtro-busca").value
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  if (termo) {
+    linhas = linhas.filter((l) => {
+      const alvo = [l.dn, l.nome_loja, l.gcm, l.coordenador, l.regional]
+        .join(" ")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return alvo.includes(termo);
+    });
+  }
+
+  return linhas;
+}
+
+/** Ponto único de atualização: recalcula lista exibida, tabela e somas. */
+function atualizarTabela() {
+  const linhas = obterLinhasExibidas();
+  renderizarTabela(linhas);
+  atualizarSomasCabecalho(linhas);
 }
 
 function renderizarTabela(lojas) {
@@ -84,8 +157,6 @@ function escapeHtml(texto) {
   return div.innerHTML;
 }
 
-let debounceMeta = {};
-
 async function onEditarMeta(evento) {
   const input = evento.target;
   const dn = parseInt(input.dataset.dn, 10);
@@ -112,23 +183,9 @@ async function onEditarMeta(evento) {
 
   const loja = LOJAS_CACHE.find((l) => l.dn === dn);
   if (loja) loja.meta = novaMeta;
+  atualizarSomasCabecalho(obterLinhasExibidas());
 }
 
 function aplicarFiltroBusca() {
-  const termo = document.getElementById("filtro-busca").value
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-
-  if (!termo) {
-    renderizarTabela(LOJAS_CACHE);
-    return;
-  }
-
-  const filtradas = LOJAS_CACHE.filter((l) => {
-    const alvo = [l.dn, l.nome_loja, l.gcm, l.coordenador, l.regional]
-      .join(" ")
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return alvo.includes(termo);
-  });
-
-  renderizarTabela(filtradas);
+  atualizarTabela();
 }

@@ -8,11 +8,12 @@ function mostrarStatusUpload(texto, erro = false) {
   el.style.color = erro ? "#C0392B" : "";
 }
 
-async function chamarRpcEmLotes(nomeRpc, sessao, campoLista, linhas, tamanhoLote = 500) {
+async function chamarRpcEmLotes(nomeRpc, sessao, campoLista, linhas, paramsExtras = {}, tamanhoLote = 500) {
   let total = 0;
-  for (let i = 0; i < linhas.length; i += tamanhoLote) {
-    const lote = linhas.slice(i, i + tamanhoLote);
-    const params = { p_nome: sessao.nome, p_senha: sessao.senha };
+  const lista = linhas.length ? linhas : [[]]; // garante ao menos 1 chamada (ex: p_mes sem linhas)
+  for (let i = 0; i < lista.length; i += tamanhoLote) {
+    const lote = lista.slice(i, i + tamanhoLote);
+    const params = { p_nome: sessao.nome, p_senha: sessao.senha, ...paramsExtras };
     params[campoLista] = lote;
     const { data, error } = await supabaseClient.rpc(nomeRpc, params);
     if (error) throw new Error(error.message);
@@ -38,7 +39,7 @@ async function tratarUploadPotencial(file) {
   const sessao = getSessao();
   mostrarStatusUpload("Lendo planilha de potencial...");
   const linhas = await lerPlanilha(file);
-  const producao = processarPlanilhaProducao(linhas);
+  const { linhas: producao } = processarPlanilhaProducao(linhas);
   const dados = montarLinhasPotencial(producao);
 
   mostrarStatusUpload(`Enviando potencial de ${dados.length} lojas...`);
@@ -48,46 +49,30 @@ async function tratarUploadPotencial(file) {
   await carregarLojas();
 }
 
-async function tratarUploadM1(file) {
+async function tratarUploadMes(file, nomeRpc, rotulo) {
   const sessao = getSessao();
-  mostrarStatusUpload("Lendo planilha de M1...");
+  mostrarStatusUpload(`Lendo planilha de ${rotulo}...`);
   const linhas = await lerPlanilha(file);
-  const producao = processarPlanilhaProducao(linhas);
+  const { linhas: producao, mes } = processarPlanilhaProducao(linhas);
   const dados = montarLinhasContratos(producao);
 
-  mostrarStatusUpload(`Atualizando M1 de ${dados.length} lojas...`);
-  const total = await chamarRpcEmLotes("fn_update_m1", sessao, "p_rows", dados);
+  mostrarStatusUpload(`Atualizando ${rotulo} de ${dados.length} lojas${mes ? ` (${mes})` : ""}...`);
+  const total = await chamarRpcEmLotes(nomeRpc, sessao, "p_rows", dados, { p_mes: mes || null });
 
-  mostrarStatusUpload(`✓ M1 atualizado em ${total} lojas.`);
+  mostrarStatusUpload(`✓ ${rotulo} atualizado em ${total} lojas${mes ? ` — ${mes}` : ""}.`);
   await carregarLojas();
+}
+
+async function tratarUploadM1(file) {
+  await tratarUploadMes(file, "fn_update_m1", "M1");
 }
 
 async function tratarUploadM2(file) {
-  const sessao = getSessao();
-  mostrarStatusUpload("Lendo planilha de M2...");
-  const linhas = await lerPlanilha(file);
-  const producao = processarPlanilhaProducao(linhas);
-  const dados = montarLinhasContratos(producao);
-
-  mostrarStatusUpload(`Atualizando M2 de ${dados.length} lojas...`);
-  const total = await chamarRpcEmLotes("fn_update_m2", sessao, "p_rows", dados);
-
-  mostrarStatusUpload(`✓ M2 atualizado em ${total} lojas.`);
-  await carregarLojas();
+  await tratarUploadMes(file, "fn_update_m2", "M2");
 }
 
 async function tratarUploadM3(file) {
-  const sessao = getSessao();
-  mostrarStatusUpload("Lendo planilha de M3...");
-  const linhas = await lerPlanilha(file);
-  const producao = processarPlanilhaProducao(linhas);
-  const dados = montarLinhasContratos(producao);
-
-  mostrarStatusUpload(`Atualizando M3 de ${dados.length} lojas...`);
-  const total = await chamarRpcEmLotes("fn_update_m3", sessao, "p_rows", dados);
-
-  mostrarStatusUpload(`✓ M3 atualizado em ${total} lojas.`);
-  await carregarLojas();
+  await tratarUploadMes(file, "fn_update_m3", "M3");
 }
 
 async function tratarUploadNovoMes(file) {
@@ -104,13 +89,13 @@ async function tratarUploadNovoMes(file) {
 
   mostrarStatusUpload("Lendo planilha do novo mês...");
   const linhas = await lerPlanilha(file);
-  const producao = processarPlanilhaProducao(linhas);
+  const { linhas: producao, mes } = processarPlanilhaProducao(linhas);
   const dados = montarLinhasContratos(producao);
 
   mostrarStatusUpload("Rotacionando M3/M2/M1 e gravando novos contratos...");
-  const total = await chamarRpcEmLotes("fn_novo_mes", sessao, "p_rows", dados);
+  const total = await chamarRpcEmLotes("fn_novo_mes", sessao, "p_rows", dados, { p_mes: mes || null });
 
-  mostrarStatusUpload(`✓ Novo mês fechado. ${total} lojas com M1 atualizado.`);
+  mostrarStatusUpload(`✓ Novo mês fechado${mes ? ` (${mes})` : ""}. ${total} lojas com M1 atualizado.`);
   await carregarLojas();
 }
 
