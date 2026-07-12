@@ -13,6 +13,10 @@
 
 * { box-sizing: border-box; }
 
+html, body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -101,9 +105,10 @@ body {
 /* ===================== APP / TOPBAR ===================== */
 
 .app {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .topbar {
@@ -218,7 +223,10 @@ body {
 
 .tabela-area {
   flex: 1;
-  padding: 0 28px 32px;
+  min-height: 0;
+  padding: 0 28px 28px;
+  display: flex;
+  flex-direction: column;
 }
 
 .scroll-topo {
@@ -226,14 +234,16 @@ body {
   overflow-y: hidden;
   height: 16px;
   margin-bottom: 6px;
+  flex: 0 0 auto;
 }
 .scroll-topo-interno {
   height: 1px;
 }
 
 .tabela-wrap {
-  overflow-x: auto;
-  overflow-y: visible;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
   border-radius: var(--raio);
   box-shadow: var(--sombra);
 }
