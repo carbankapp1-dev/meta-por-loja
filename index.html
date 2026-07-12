@@ -80,15 +80,67 @@
       <table id="tabela-lojas">
         <thead>
           <tr>
-            <th class="col-fixa col-dn" data-col="dn">DN</th>
-            <th class="col-fixa col-nome" data-col="nome_loja">Nome da Loja</th>
-            <th data-col="gcm">GCM</th>
-            <th data-col="gravames_mercado">Gravames Mercado</th>
-            <th data-col="potencial">Potencial de Mercado</th>
-            <th data-col="m3">M3</th>
-            <th data-col="m2">M2</th>
-            <th data-col="m1">M1</th>
-            <th data-col="meta">Meta</th>
+            <th class="col-fixa col-dn" data-col="dn">
+              <div class="th-linha">
+                <span class="th-titulo">DN</span>
+                <button type="button" class="th-filtro" data-col="dn" title="Filtrar DN">▾</button>
+              </div>
+            </th>
+            <th class="col-fixa col-nome" data-col="nome_loja">
+              <div class="th-linha">
+                <span class="th-titulo">Nome da Loja</span>
+                <button type="button" class="th-filtro" data-col="nome_loja" title="Filtrar Nome da Loja">▾</button>
+              </div>
+            </th>
+            <th data-col="gcm">
+              <div class="th-linha">
+                <span class="th-titulo">GCM</span>
+                <button type="button" class="th-filtro" data-col="gcm" title="Filtrar GCM">▾</button>
+              </div>
+            </th>
+            <th data-col="gravames_mercado">
+              <div class="th-linha">
+                <span class="th-titulo">Gravames Mercado</span>
+                <button type="button" class="th-filtro" data-col="gravames_mercado" title="Filtrar Gravames Mercado">▾</button>
+              </div>
+            </th>
+            <th data-col="potencial">
+              <div class="th-linha">
+                <span class="th-titulo">Potencial de Mercado</span>
+                <button type="button" class="th-filtro" data-col="potencial" title="Filtrar Potencial de Mercado">▾</button>
+              </div>
+            </th>
+            <th data-col="m3">
+              <div class="th-linha">
+                <span class="th-titulo">M3</span>
+                <button type="button" class="th-filtro" data-col="m3" title="Filtrar M3">▾</button>
+              </div>
+              <div class="th-mes" id="mes-m3"></div>
+              <div class="th-soma" id="soma-m3"></div>
+            </th>
+            <th data-col="m2">
+              <div class="th-linha">
+                <span class="th-titulo">M2</span>
+                <button type="button" class="th-filtro" data-col="m2" title="Filtrar M2">▾</button>
+              </div>
+              <div class="th-mes" id="mes-m2"></div>
+              <div class="th-soma" id="soma-m2"></div>
+            </th>
+            <th data-col="m1">
+              <div class="th-linha">
+                <span class="th-titulo">M1</span>
+                <button type="button" class="th-filtro" data-col="m1" title="Filtrar M1">▾</button>
+              </div>
+              <div class="th-mes" id="mes-m1"></div>
+              <div class="th-soma" id="soma-m1"></div>
+            </th>
+            <th data-col="meta">
+              <div class="th-linha">
+                <span class="th-titulo">Meta</span>
+                <button type="button" class="th-filtro" data-col="meta" title="Filtrar Meta">▾</button>
+              </div>
+              <div class="th-soma" id="soma-meta"></div>
+            </th>
           </tr>
         </thead>
         <tbody id="tabela-corpo">
@@ -100,12 +152,27 @@
 
 </div>
 
+<!-- Painel de filtro compartilhado (estilo Excel), reaproveitado para qualquer coluna -->
+<div id="painel-filtro" class="painel-filtro oculto">
+  <input type="text" id="filtro-pesquisa-coluna" placeholder="Pesquisar...">
+  <div class="filtro-acoes-topo">
+    <button type="button" id="filtro-selecionar-tudo">Selecionar tudo</button>
+    <button type="button" id="filtro-limpar-tudo">Limpar</button>
+  </div>
+  <div id="filtro-lista-valores" class="filtro-lista-valores"></div>
+  <div class="filtro-acoes-rodape">
+    <button type="button" id="filtro-cancelar">Cancelar</button>
+    <button type="button" id="filtro-aplicar" class="filtro-aplicar">OK</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/supabaseClient.js"></script>
 <script src="js/parse.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/filtros.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/uploads.js"></script>
 <script src="js/app.js"></script>
