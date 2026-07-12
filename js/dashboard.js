@@ -7,7 +7,7 @@ let LOJAS_CACHE = [];
 async function carregarLojas() {
   const sessao = getSessao();
   const corpo = document.getElementById("tabela-corpo");
-  corpo.innerHTML = `<tr><td colspan="11" class="carregando">Carregando...</td></tr>`;
+  corpo.innerHTML = `<tr><td colspan="9" class="carregando">Carregando...</td></tr>`;
 
   const { data, error } = await supabaseClient.rpc("fn_get_lojas", {
     p_nome: sessao.nome,
@@ -15,7 +15,7 @@ async function carregarLojas() {
   });
 
   if (error) {
-    corpo.innerHTML = `<tr><td colspan="11" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="9" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
     return;
   }
 
@@ -34,17 +34,15 @@ function renderizarTabela(lojas) {
   contador.textContent = `${lojas.length} loja${lojas.length === 1 ? "" : "s"}`;
 
   if (lojas.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="11" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="9" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
     return;
   }
 
   corpo.innerHTML = lojas.map((l) => `
     <tr data-dn="${l.dn}">
-      <td>${l.dn}</td>
-      <td>${escapeHtml(l.nome_loja)}</td>
+      <td class="col-fixa col-dn">${l.dn}</td>
+      <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
       <td>${escapeHtml(l.gcm || "")}</td>
-      <td>${escapeHtml(l.coordenador || "")}</td>
-      <td>${escapeHtml(l.regional || "")}</td>
       <td>${formatarNumero(l.gravames_mercado)}</td>
       <td>${l.potencial ? `<span class="badge-potencial">${escapeHtml(l.potencial)}</span>` : ""}</td>
       <td>${formatarNumero(l.m3)}</td>

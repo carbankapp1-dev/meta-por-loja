@@ -62,6 +62,34 @@ async function tratarUploadM1(file) {
   await carregarLojas();
 }
 
+async function tratarUploadM2(file) {
+  const sessao = getSessao();
+  mostrarStatusUpload("Lendo planilha de M2...");
+  const linhas = await lerPlanilha(file);
+  const producao = processarPlanilhaProducao(linhas);
+  const dados = montarLinhasContratos(producao);
+
+  mostrarStatusUpload(`Atualizando M2 de ${dados.length} lojas...`);
+  const total = await chamarRpcEmLotes("fn_update_m2", sessao, "p_rows", dados);
+
+  mostrarStatusUpload(`✓ M2 atualizado em ${total} lojas.`);
+  await carregarLojas();
+}
+
+async function tratarUploadM3(file) {
+  const sessao = getSessao();
+  mostrarStatusUpload("Lendo planilha de M3...");
+  const linhas = await lerPlanilha(file);
+  const producao = processarPlanilhaProducao(linhas);
+  const dados = montarLinhasContratos(producao);
+
+  mostrarStatusUpload(`Atualizando M3 de ${dados.length} lojas...`);
+  const total = await chamarRpcEmLotes("fn_update_m3", sessao, "p_rows", dados);
+
+  mostrarStatusUpload(`✓ M3 atualizado em ${total} lojas.`);
+  await carregarLojas();
+}
+
 async function tratarUploadNovoMes(file) {
   const sessao = getSessao();
 
@@ -91,6 +119,8 @@ function configurarUploads() {
     ["upload-lojas", tratarUploadLojas],
     ["upload-potencial", tratarUploadPotencial],
     ["upload-m1", tratarUploadM1],
+    ["upload-m2", tratarUploadM2],
+    ["upload-m3", tratarUploadM3],
     ["upload-novo-mes", tratarUploadNovoMes],
   ];
 

@@ -216,19 +216,32 @@ body {
 
 /* ===================== TABELA ===================== */
 
-.tabela-wrap {
+.tabela-area {
   flex: 1;
   padding: 0 28px 32px;
+}
+
+.scroll-topo {
   overflow-x: auto;
+  overflow-y: hidden;
+  height: 16px;
+  margin-bottom: 6px;
+}
+.scroll-topo-interno {
+  height: 1px;
+}
+
+.tabela-wrap {
+  overflow-x: auto;
+  overflow-y: visible;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
 }
 
 #tabela-lojas {
   width: 100%;
   border-collapse: collapse;
   background: var(--branco);
-  border-radius: var(--raio);
-  overflow: hidden;
-  box-shadow: var(--sombra);
   font-size: 13px;
 }
 
@@ -241,21 +254,39 @@ body {
   white-space: nowrap;
   position: sticky;
   top: 0;
+  z-index: 2;
 }
 
 #tabela-lojas tbody td {
   padding: 10px 14px;
   border-bottom: 1px solid var(--cinza-borda);
   white-space: nowrap;
+  background: var(--branco);
 }
 
-#tabela-lojas tbody tr:hover {
+#tabela-lojas tbody tr:hover td {
   background: var(--verde-claro);
 }
 
 #tabela-lojas tbody tr:last-child td {
   border-bottom: none;
 }
+
+/* Colunas fixas (DN e Nome da Loja) ao rolar horizontalmente */
+.col-fixa {
+  position: sticky;
+  left: 0;
+}
+.col-dn { left: 0; }
+.col-nome {
+  left: 70px;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+thead .col-fixa { z-index: 3; }
+tbody .col-fixa { z-index: 1; }
 
 .carregando, .sem-dados {
   text-align: center;

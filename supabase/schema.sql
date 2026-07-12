@@ -310,6 +310,82 @@ $$;
 grant execute on function fn_update_m1(text, text, jsonb) to anon;
 
 -- --------------------------------------------------------------------------
+-- FUNÇÃO: atualizar M2 direto, sem rotação — admin only
+-- p_rows: jsonb array de {dn, contratos}
+-- --------------------------------------------------------------------------
+
+create or replace function fn_update_m2(p_nome text, p_senha text, p_rows jsonb)
+returns integer
+language plpgsql
+security definer
+as $$
+declare
+  v_perfil text;
+  v_count integer;
+begin
+  select perfil into v_perfil from _valida_usuario(p_nome, p_senha);
+  if v_perfil <> 'admin' then
+    raise exception 'apenas admin pode fazer este upload';
+  end if;
+
+  with dados as (
+    select
+      (r->>'dn')::integer as dn,
+      (r->>'contratos')::integer as contratos
+    from jsonb_array_elements(p_rows) as r
+  )
+  update lojas l
+  set m2 = d.contratos,
+      atualizado_em = now()
+  from dados d
+  where l.dn = d.dn;
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+
+grant execute on function fn_update_m2(text, text, jsonb) to anon;
+
+-- --------------------------------------------------------------------------
+-- FUNÇÃO: atualizar M3 direto, sem rotação — admin only
+-- p_rows: jsonb array de {dn, contratos}
+-- --------------------------------------------------------------------------
+
+create or replace function fn_update_m3(p_nome text, p_senha text, p_rows jsonb)
+returns integer
+language plpgsql
+security definer
+as $$
+declare
+  v_perfil text;
+  v_count integer;
+begin
+  select perfil into v_perfil from _valida_usuario(p_nome, p_senha);
+  if v_perfil <> 'admin' then
+    raise exception 'apenas admin pode fazer este upload';
+  end if;
+
+  with dados as (
+    select
+      (r->>'dn')::integer as dn,
+      (r->>'contratos')::integer as contratos
+    from jsonb_array_elements(p_rows) as r
+  )
+  update lojas l
+  set m3 = d.contratos,
+      atualizado_em = now()
+  from dados d
+  where l.dn = d.dn;
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+
+grant execute on function fn_update_m3(text, text, jsonb) to anon;
+
+-- --------------------------------------------------------------------------
 -- FUNÇÃO: "Novo Mês" — rotaciona M3<-M2, M2<-M1, M1<-0 para TODAS as lojas,
 -- depois grava os contratos enviados em M1. — admin only
 -- p_rows: jsonb array de {dn, contratos}

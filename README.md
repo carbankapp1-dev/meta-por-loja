@@ -57,15 +57,21 @@ pelos valores copiados no passo anterior.
     pega `Gravames Mercado` e classifica automaticamente a faixa de potencial:
     `0 GRAVAMES`, `A. 1 GRAVAME`, `B. 2-5 GRAVAMES`, `C. 6-10 GRAVAMES`,
     `D. 11-20 GRAVAMES`, `E. 21-30 GRAVAMES`, `F. > 30 GRAVAMES`.
-  - **Atualizar M1** → corrige o M1 do mês corrente (mesma leitura de coluna
-    `DEALER` e `Contratos`), sem mexer em M2/M3. Use quantas vezes quiser
-    durante o mês.
+  - **Atualizar M1 / M2 / M3** → corrige o mês correspondente (mesma leitura de
+    coluna `DEALER` e `Contratos`), sem mexer nos outros meses. Use quantas
+    vezes quiser durante o mês.
   - **Novo Mês** → fecha o mês: empurra M2→M3, M1→M2, e grava a planilha
     enviada como novo M1. Pede confirmação antes de rodar, porque é uma ação
     que reorganiza o histórico de todas as lojas.
 - **Meta**: campo editável direto na tabela, para qualquer perfil (dentro do
   que ele pode ver). Salva sozinho ao sair do campo.
 - **Busca**: filtra por DN, nome da loja, GCM, coordenador ou regional.
+- **Colunas na tela**: mostra DN, Nome da Loja, GCM, Gravames Mercado,
+  Potencial, M3, M2, M1 e Meta. Coordenador e Regional continuam salvos no
+  banco (usados para o filtro por perfil e na busca), só não aparecem como
+  coluna na tabela. As colunas **DN** e **Nome da Loja** ficam fixas ao rolar
+  a tabela para o lado, e o Nome da Loja é cortado com reticências (o nome
+  completo aparece ao passar o mouse).
 
 ## 5. Como funciona a segurança
 

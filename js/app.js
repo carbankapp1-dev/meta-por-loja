@@ -21,8 +21,37 @@ function mostrarLogin() {
   document.getElementById("app").classList.add("oculto");
 }
 
+function configurarBarraRolagemTopo() {
+  const topo = document.getElementById("scroll-topo");
+  const topoInterno = document.getElementById("scroll-topo-interno");
+  const wrap = document.getElementById("tabela-wrap");
+  const tabela = document.getElementById("tabela-lojas");
+
+  function sincronizarLargura() {
+    topoInterno.style.width = tabela.scrollWidth + "px";
+  }
+
+  sincronizarLargura();
+  new ResizeObserver(sincronizarLargura).observe(tabela);
+
+  let sincronizando = false;
+  topo.addEventListener("scroll", () => {
+    if (sincronizando) return;
+    sincronizando = true;
+    wrap.scrollLeft = topo.scrollLeft;
+    sincronizando = false;
+  });
+  wrap.addEventListener("scroll", () => {
+    if (sincronizando) return;
+    sincronizando = true;
+    topo.scrollLeft = wrap.scrollLeft;
+    sincronizando = false;
+  });
+}
+
 async function iniciar() {
   configurarUploads();
+  configurarBarraRolagemTopo();
 
   document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();

@@ -52,6 +52,14 @@
       Atualizar M1
       <input type="file" id="upload-m1" accept=".xlsx,.xls" hidden>
     </label>
+    <label class="btn-upload">
+      Atualizar M2
+      <input type="file" id="upload-m2" accept=".xlsx,.xls" hidden>
+    </label>
+    <label class="btn-upload">
+      Atualizar M3
+      <input type="file" id="upload-m3" accept=".xlsx,.xls" hidden>
+    </label>
     <label class="btn-upload btn-upload-destaque">
       Novo Mês
       <input type="file" id="upload-novo-mes" accept=".xlsx,.xls" hidden>
@@ -64,27 +72,30 @@
     <span id="contador-lojas" class="contador-lojas"></span>
   </section>
 
-  <main class="tabela-wrap">
-    <table id="tabela-lojas">
-      <thead>
-        <tr>
-          <th data-col="dn">DN</th>
-          <th data-col="nome_loja">Nome da Loja</th>
-          <th data-col="gcm">GCM</th>
-          <th data-col="coordenador">Coordenador</th>
-          <th data-col="regional">Regional</th>
-          <th data-col="gravames_mercado">Gravames Mercado</th>
-          <th data-col="potencial">Potencial de Mercado</th>
-          <th data-col="m3">M3</th>
-          <th data-col="m2">M2</th>
-          <th data-col="m1">M1</th>
-          <th data-col="meta">Meta</th>
-        </tr>
-      </thead>
-      <tbody id="tabela-corpo">
-        <tr><td colspan="11" class="carregando">Carregando...</td></tr>
-      </tbody>
-    </table>
+  <main class="tabela-area">
+    <div id="scroll-topo" class="scroll-topo">
+      <div id="scroll-topo-interno" class="scroll-topo-interno"></div>
+    </div>
+    <div id="tabela-wrap" class="tabela-wrap">
+      <table id="tabela-lojas">
+        <thead>
+          <tr>
+            <th class="col-fixa col-dn" data-col="dn">DN</th>
+            <th class="col-fixa col-nome" data-col="nome_loja">Nome da Loja</th>
+            <th data-col="gcm">GCM</th>
+            <th data-col="gravames_mercado">Gravames Mercado</th>
+            <th data-col="potencial">Potencial de Mercado</th>
+            <th data-col="m3">M3</th>
+            <th data-col="m2">M2</th>
+            <th data-col="m1">M1</th>
+            <th data-col="meta">Meta</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-corpo">
+          <tr><td colspan="9" class="carregando">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </main>
 
 </div>
