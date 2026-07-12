@@ -250,12 +250,54 @@ body {
   background: var(--azul-escuro);
   color: var(--branco);
   text-align: left;
-  padding: 12px 14px;
+  padding: 10px 12px;
   font-weight: 600;
   white-space: nowrap;
   position: sticky;
   top: 0;
   z-index: 2;
+}
+
+.th-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.th-titulo {
+  font-size: 13px;
+}
+
+.th-filtro {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,.65);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background .15s, color .15s;
+}
+.th-filtro:hover { background: rgba(255,255,255,.15); color: var(--branco); }
+.th-filtro-ativo { color: var(--verde); }
+.th-filtro-abrindo { background: rgba(255,255,255,.2); color: var(--branco); }
+
+.th-mes {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--verde);
+  margin-top: 2px;
+  text-align: center;
+}
+
+.th-soma {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--branco);
+  margin-top: 2px;
+  text-align: center;
 }
 
 #tabela-lojas tbody td {
@@ -319,10 +361,12 @@ tbody .col-fixa { z-index: 1; }
 
 .badge-potencial {
   display: inline-block;
-  padding: 3px 10px;
+  width: 140px;
+  padding: 3px 6px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -352,3 +396,93 @@ tbody .col-fixa { z-index: 1; }
   .topbar, .barra-uploads, .filtros, .tabela-wrap { padding-left: 14px; padding-right: 14px; }
   .filtros { flex-direction: column; align-items: stretch; }
 }
+
+/* ===================== PAINEL DE FILTRO (estilo Excel) ===================== */
+
+.painel-filtro {
+  position: absolute;
+  width: 240px;
+  background: var(--branco);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(12, 45, 72, 0.25);
+  border: 1px solid var(--cinza-borda);
+  padding: 10px;
+  z-index: 50;
+  font-size: 13px;
+}
+
+#filtro-pesquisa-coluna {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+#filtro-pesquisa-coluna:focus { outline: 2px solid var(--verde); }
+
+.filtro-acoes-topo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.filtro-acoes-topo button {
+  background: none;
+  border: none;
+  color: var(--azul-escuro-2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.filtro-acoes-topo button:hover { text-decoration: underline; }
+
+.filtro-lista-valores {
+  max-height: 220px;
+  overflow-y: auto;
+  border-top: 1px solid var(--cinza-borda);
+  border-bottom: 1px solid var(--cinza-borda);
+  padding: 6px 0;
+  margin-bottom: 8px;
+}
+
+.filtro-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.filtro-item:hover { background: var(--verde-claro); }
+.filtro-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filtro-acoes-rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.filtro-acoes-rodape button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--cinza-borda);
+  background: var(--branco);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filtro-acoes-rodape .filtro-aplicar {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  border-color: var(--azul-escuro);
+}
+.filtro-acoes-rodape .filtro-aplicar:hover { background: var(--azul-escuro-2); }
