@@ -269,6 +269,22 @@ body {
   background: var(--verde-claro);
 }
 
+/* Loja zerada nos 3 últimos meses (M3, M2 e M1 = 0) */
+#tabela-lojas tbody tr.linha-zerada td {
+  background: #FFDCDC;
+}
+#tabela-lojas tbody tr.linha-zerada:hover td {
+  background: #FFC9C9;
+}
+
+/* Loja com pelo menos um contrato em M3, M2 ou M1 */
+#tabela-lojas tbody tr.linha-atencao td {
+  background: #FFF3B8;
+}
+#tabela-lojas tbody tr.linha-atencao:hover td {
+  background: #FFEB94;
+}
+
 #tabela-lojas tbody tr:last-child td {
   border-bottom: none;
 }
@@ -314,7 +330,7 @@ tbody .col-fixa { z-index: 1; }
 .pot-0 { background: #E74C3C; color: var(--branco); }
 .pot-a { background: #E67E22; color: var(--branco); }
 .pot-b { background: #F1C40F; color: #5C4400; }
-.pot-c { background: #27AE60; color: var(--branco); }
+.pot-c { background: #90D5FF; color: #063A5C; }
 .pot-d { background: #16A085; color: var(--branco); }
 .pot-e { background: #2980B9; color: var(--branco); }
 .pot-f { background: #1A1A1A; color: var(--branco); }
