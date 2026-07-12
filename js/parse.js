@@ -115,6 +115,7 @@ function processarPlanilhaProducao(linhas) {
   const iMes = acharColuna(cabecalho, "MÊS", "MES");
   const iDealer = acharColuna(cabecalho, "DEALER");
   const iGravames = acharColuna(cabecalho, "Gravames Mercado");
+  const iMarketShare = acharColuna(cabecalho, "%Market_Share", "Market_Share", "Market Share");
   const iContratos = acharColuna(cabecalho, "Contratos");
 
   if (iDealer === -1) {
@@ -144,18 +145,20 @@ function processarPlanilhaProducao(linhas) {
     resultado.push({
       dn,
       gravames_mercado: iGravames !== -1 ? (Number(linha[iGravames]) || 0) : null,
+      market_share: iMarketShare !== -1 ? (Number(linha[iMarketShare]) || 0) : null,
       contratos: iContratos !== -1 ? (Number(linha[iContratos]) || 0) : null,
     });
   }
   return { linhas: resultado, mes };
 }
 
-/** Monta as linhas prontas para o upload "Potencial" (gravames + classificação). */
+/** Monta as linhas prontas para o upload "Potencial" (gravames + classificação + market share). */
 function montarLinhasPotencial(linhasProducao) {
   return linhasProducao.map((l) => ({
     dn: l.dn,
     gravames_mercado: l.gravames_mercado || 0,
     potencial: classificarPotencial(l.gravames_mercado || 0),
+    market_share: l.market_share || 0,
   }));
 }
 
