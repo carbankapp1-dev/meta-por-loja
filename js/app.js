@@ -52,6 +52,7 @@ function configurarBarraRolagemTopo() {
 async function iniciar() {
   configurarUploads();
   configurarBarraRolagemTopo();
+  configurarFiltrosColuna();
 
   document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
