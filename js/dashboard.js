@@ -28,6 +28,19 @@ function formatarNumero(valor) {
   return Number(valor).toLocaleString("pt-BR");
 }
 
+function classePotencial(potencial) {
+  const mapa = {
+    "0 GRAVAMES": "pot-0",
+    "A. 1 GRAVAME": "pot-a",
+    "B. 2-5 GRAVAMES": "pot-b",
+    "C. 6-10 GRAVAMES": "pot-c",
+    "D. 11-20 GRAVAMES": "pot-d",
+    "E. 21-30 GRAVAMES": "pot-e",
+    "F. > 30 GRAVAMES": "pot-f",
+  };
+  return mapa[potencial] || "";
+}
+
 function renderizarTabela(lojas) {
   const corpo = document.getElementById("tabela-corpo");
   const contador = document.getElementById("contador-lojas");
@@ -44,7 +57,7 @@ function renderizarTabela(lojas) {
       <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
       <td>${escapeHtml(l.gcm || "")}</td>
       <td>${formatarNumero(l.gravames_mercado)}</td>
-      <td>${l.potencial ? `<span class="badge-potencial">${escapeHtml(l.potencial)}</span>` : ""}</td>
+      <td>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
       <td>${formatarNumero(l.m3)}</td>
       <td>${formatarNumero(l.m2)}</td>
       <td>${formatarNumero(l.m1)}</td>
