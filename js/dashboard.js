@@ -7,7 +7,7 @@ let LOJAS_CACHE = [];
 async function carregarLojas() {
   const sessao = getSessao();
   const corpo = document.getElementById("tabela-corpo");
-  corpo.innerHTML = `<tr><td colspan="9" class="carregando">Carregando...</td></tr>`;
+  corpo.innerHTML = `<tr><td colspan="10" class="carregando">Carregando...</td></tr>`;
 
   const TAMANHO_PAGINA = 1000; // limite padrão do Supabase por requisição
   let todas = [];
@@ -28,7 +28,7 @@ async function carregarLojas() {
       pagina++;
     }
   } catch (error) {
-    corpo.innerHTML = `<tr><td colspan="9" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="10" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
     return;
   }
 
@@ -50,6 +50,11 @@ function ordenarLojas(lojas) {
 function formatarNumero(valor) {
   if (valor === null || valor === undefined) return "0";
   return Number(valor).toLocaleString("pt-BR");
+}
+
+function formatarPercentual(valor) {
+  if (valor === null || valor === undefined) return "0,0%";
+  return (Number(valor) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
 }
 
 function classePotencial(potencial) {
@@ -128,7 +133,7 @@ function renderizarTabela(lojas) {
   contador.textContent = `${lojas.length} loja${lojas.length === 1 ? "" : "s"}`;
 
   if (lojas.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="9" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="10" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
     return;
   }
 
@@ -138,6 +143,7 @@ function renderizarTabela(lojas) {
       <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
       <td>${escapeHtml(l.gcm || "")}</td>
       <td>${formatarNumero(l.gravames_mercado)}</td>
+      <td>${formatarPercentual(l.market_share)}</td>
       <td>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
       <td>${formatarNumero(l.m3)}</td>
       <td>${formatarNumero(l.m2)}</td>
