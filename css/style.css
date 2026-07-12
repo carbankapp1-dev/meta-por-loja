@@ -240,7 +240,8 @@ body {
 
 #tabela-lojas {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--branco);
   font-size: 13px;
 }
@@ -288,6 +289,12 @@ body {
 thead .col-fixa { z-index: 3; }
 tbody .col-fixa { z-index: 1; }
 
+/* Da coluna "Gravames Mercado" até "Meta": tudo centralizado */
+#tabela-lojas th:nth-child(n+4),
+#tabela-lojas td:nth-child(n+4) {
+  text-align: center;
+}
+
 .carregando, .sem-dados {
   text-align: center;
   padding: 30px !important;
@@ -300,10 +307,17 @@ tbody .col-fixa { z-index: 1; }
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
-  background: var(--verde-claro);
-  color: var(--verde-escuro);
   white-space: nowrap;
 }
+
+/* Formatação condicional por faixa de gravames (mesmas cores da legenda) */
+.pot-0 { background: #E74C3C; color: var(--branco); }
+.pot-a { background: #E67E22; color: var(--branco); }
+.pot-b { background: #F1C40F; color: #5C4400; }
+.pot-c { background: #27AE60; color: var(--branco); }
+.pot-d { background: #16A085; color: var(--branco); }
+.pot-e { background: #2980B9; color: var(--branco); }
+.pot-f { background: #1A1A1A; color: var(--branco); }
 
 .input-meta {
   width: 70px;
