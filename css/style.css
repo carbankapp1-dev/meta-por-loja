@@ -264,7 +264,7 @@ body {
   justify-content: center;
   position: relative;
   gap: 8px;
-  padding-right: 18px; /* espaço reservado pro ícone de filtro, sem descentralizar o título */
+  padding: 0 20px; /* espaço reservado dos dois lados pro ícone de filtro não cortar o título */
 }
 
 .th-titulo {
@@ -274,7 +274,7 @@ body {
 
 .th-filtro {
   position: absolute;
-  right: -2px;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
@@ -291,18 +291,23 @@ body {
 .th-filtro-ativo { color: var(--verde); }
 .th-filtro-abrindo { background: rgba(255,255,255,.2); color: var(--branco); }
 
-/* Coluna "Gravames Mercado": título quebra em 2 linhas para caber numa coluna mais estreita */
-#tabela-lojas thead th[data-col="gravames_mercado"] {
+/* "Gravames Mercado" e "Potencial de Mercado": título quebra em 2 linhas,
+   e a coluna de Gravames Mercado fica só larga o suficiente pro título. */
+#tabela-lojas thead th[data-col="gravames_mercado"],
+#tabela-lojas thead th[data-col="potencial"] {
   white-space: normal;
-  width: 88px;
 }
-#tabela-lojas thead th[data-col="gravames_mercado"] .th-titulo {
+#tabela-lojas thead th[data-col="gravames_mercado"] .th-titulo,
+#tabela-lojas thead th[data-col="potencial"] .th-titulo {
   white-space: normal;
-  line-height: 1.2;
-  word-break: break-word;
+  line-height: 1.25;
+  word-break: keep-all;
+}
+#tabela-lojas thead th[data-col="gravames_mercado"] {
+  width: 118px;
 }
 #tabela-lojas td:nth-child(4) {
-  width: 88px;
+  width: 118px;
 }
 
 .th-mes {
