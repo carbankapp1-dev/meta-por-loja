@@ -41,6 +41,14 @@ function classePotencial(potencial) {
   return mapa[potencial] || "";
 }
 
+function classeLinha(loja) {
+  const m3 = Number(loja.m3) || 0;
+  const m2 = Number(loja.m2) || 0;
+  const m1 = Number(loja.m1) || 0;
+  if (m3 === 0 && m2 === 0 && m1 === 0) return "linha-zerada";
+  return "linha-atencao";
+}
+
 function renderizarTabela(lojas) {
   const corpo = document.getElementById("tabela-corpo");
   const contador = document.getElementById("contador-lojas");
@@ -52,7 +60,7 @@ function renderizarTabela(lojas) {
   }
 
   corpo.innerHTML = lojas.map((l) => `
-    <tr data-dn="${l.dn}">
+    <tr data-dn="${l.dn}" class="${classeLinha(l)}">
       <td class="col-fixa col-dn">${l.dn}</td>
       <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
       <td>${escapeHtml(l.gcm || "")}</td>
