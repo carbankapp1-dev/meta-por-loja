@@ -11,6 +11,9 @@ function rotuloValor(coluna, valor) {
   if (coluna === "gravames_mercado" || coluna === "m3" || coluna === "m2" || coluna === "m1" || coluna === "meta") {
     return formatarNumero(valor);
   }
+  if (coluna === "market_share") {
+    return formatarPercentual(valor);
+  }
   return String(valor);
 }
 
