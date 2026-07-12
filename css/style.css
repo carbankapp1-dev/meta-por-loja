@@ -304,13 +304,15 @@ body {
 .th-filtro-ativo { color: var(--verde); }
 .th-filtro-abrindo { background: rgba(255,255,255,.2); color: var(--branco); }
 
-/* "Gravames Mercado" e "Potencial de Mercado": título quebra em 2 linhas,
+/* "Gravames Mercado", "Market Share" e "Potencial de Mercado": título quebra em 2 linhas,
    e a coluna de Gravames Mercado fica só larga o suficiente pro título. */
 #tabela-lojas thead th[data-col="gravames_mercado"],
+#tabela-lojas thead th[data-col="market_share"],
 #tabela-lojas thead th[data-col="potencial"] {
   white-space: normal;
 }
 #tabela-lojas thead th[data-col="gravames_mercado"] .th-titulo,
+#tabela-lojas thead th[data-col="market_share"] .th-titulo,
 #tabela-lojas thead th[data-col="potencial"] .th-titulo {
   white-space: normal;
   line-height: 1.25;
@@ -319,8 +321,14 @@ body {
 #tabela-lojas thead th[data-col="gravames_mercado"] {
   width: 118px;
 }
+#tabela-lojas thead th[data-col="market_share"] {
+  width: 100px;
+}
 #tabela-lojas td:nth-child(4) {
   width: 118px;
+}
+#tabela-lojas td:nth-child(5) {
+  width: 100px;
 }
 
 .th-mes {
