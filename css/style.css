@@ -114,24 +114,54 @@ body {
 .topbar {
   background: var(--azul-escuro);
   color: var(--branco);
-  padding: 14px 28px;
+  padding: 12px 28px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
 }
 
 .topbar-titulo {
   font-size: 19px;
   font-weight: 700;
+  flex: 0 0 auto;
 }
 .topbar-titulo span { color: var(--verde); }
 
 .topbar-usuario {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   font-size: 13px;
+  color: rgba(255,255,255,.85);
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
+
+.topbar-separador {
+  opacity: .5;
+}
+
+.contador-lojas {
+  white-space: nowrap;
+}
+
+.topbar-espaco {
+  flex: 1;
+}
+
+.topbar-busca {
+  flex: 0 0 auto;
+  width: 200px;
+  padding: 7px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.08);
+  color: var(--branco);
+  font-family: inherit;
+  font-size: 12px;
+}
+.topbar-busca::placeholder { color: rgba(255,255,255,.55); }
+.topbar-busca:focus { outline: 2px solid var(--verde); background: rgba(255,255,255,.14); }
 
 #btn-logout {
   background: transparent;
@@ -142,6 +172,7 @@ body {
   font-family: inherit;
   cursor: pointer;
   font-size: 13px;
+  flex: 0 0 auto;
   transition: background .15s;
 }
 #btn-logout:hover { background: rgba(255,255,255,.12); }
@@ -189,34 +220,6 @@ body {
   font-size: 12px;
   color: var(--cinza-texto);
   margin-left: 8px;
-}
-
-/* ===================== FILTROS ===================== */
-
-.filtros {
-  padding: 16px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-#filtro-busca {
-  flex: 1;
-  max-width: 420px;
-  padding: 10px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--cinza-borda);
-  font-family: inherit;
-  font-size: 13px;
-  background: var(--branco);
-}
-#filtro-busca:focus { outline: 2px solid var(--verde); }
-
-.contador-lojas {
-  font-size: 13px;
-  color: var(--cinza-texto);
-  white-space: nowrap;
 }
 
 /* ===================== TABELA ===================== */
@@ -429,8 +432,10 @@ tbody .col-fixa { z-index: 1; }
 .input-meta.erro { border-color: #C0392B; }
 
 @media (max-width: 720px) {
-  .topbar, .barra-uploads, .filtros, .tabela-wrap { padding-left: 14px; padding-right: 14px; }
-  .filtros { flex-direction: column; align-items: stretch; }
+  .topbar, .barra-uploads, .tabela-wrap { padding-left: 14px; padding-right: 14px; }
+  .topbar { flex-wrap: wrap; row-gap: 10px; }
+  .topbar-espaco { display: none; }
+  .topbar-busca { flex: 1 1 100%; width: auto; order: 3; }
 }
 
 /* ===================== PAINEL DE FILTRO (estilo Excel) ===================== */
