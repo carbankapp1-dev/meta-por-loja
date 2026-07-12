@@ -34,8 +34,12 @@
     <div class="topbar-titulo">Painel <span>GCM</span></div>
     <div class="topbar-usuario">
       <span id="usuario-info"></span>
-      <button id="btn-logout">Sair</button>
+      <span class="topbar-separador">·</span>
+      <span id="contador-lojas" class="contador-lojas"></span>
     </div>
+    <div class="topbar-espaco"></div>
+    <input type="text" id="filtro-busca" class="topbar-busca" placeholder="Buscar por...">
+    <button id="btn-logout">Sair</button>
   </header>
 
   <section id="barra-uploads" class="barra-uploads oculto">
@@ -65,11 +69,6 @@
       <input type="file" id="upload-novo-mes" accept=".xlsx,.xls" hidden>
     </label>
     <span id="upload-status" class="upload-status"></span>
-  </section>
-
-  <section class="filtros">
-    <input type="text" id="filtro-busca" placeholder="Buscar por loja, DN, GCM, coordenador ou regional...">
-    <span id="contador-lojas" class="contador-lojas"></span>
   </section>
 
   <main class="tabela-area">
