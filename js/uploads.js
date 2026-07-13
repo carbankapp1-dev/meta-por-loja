@@ -75,6 +75,20 @@ async function tratarUploadM3(file) {
   await tratarUploadMes(file, "fn_update_m3", "M3");
 }
 
+async function tratarUploadMesAtual(file) {
+  const sessao = getSessao();
+  mostrarStatusUpload("Lendo planilha do mês atual...");
+  const linhas = await lerPlanilha(file);
+  const { linhas: producao } = processarPlanilhaProducao(linhas);
+  const dados = montarLinhasContratos(producao);
+
+  mostrarStatusUpload(`Atualizando Mês Atual de ${dados.length} lojas...`);
+  const total = await chamarRpcEmLotes("fn_update_mes_atual", sessao, "p_rows", dados);
+
+  mostrarStatusUpload(`✓ Mês Atual atualizado em ${total} lojas.`);
+  await carregarLojas();
+}
+
 async function tratarUploadNovoMes(file) {
   const sessao = getSessao();
 
@@ -106,6 +120,7 @@ function configurarUploads() {
     ["upload-m1", tratarUploadM1],
     ["upload-m2", tratarUploadM2],
     ["upload-m3", tratarUploadM3],
+    ["upload-mes-atual", tratarUploadMesAtual],
     ["upload-novo-mes", tratarUploadNovoMes],
   ];
 
