@@ -7,7 +7,7 @@ let LOJAS_CACHE = [];
 async function carregarLojas() {
   const sessao = getSessao();
   const corpo = document.getElementById("tabela-corpo");
-  corpo.innerHTML = `<tr><td colspan="10" class="carregando">Carregando...</td></tr>`;
+  corpo.innerHTML = `<tr><td colspan="11" class="carregando">Carregando...</td></tr>`;
 
   const TAMANHO_PAGINA = 1000; // limite padrão do Supabase por requisição
   let todas = [];
@@ -28,7 +28,7 @@ async function carregarLojas() {
       pagina++;
     }
   } catch (error) {
-    corpo.innerHTML = `<tr><td colspan="10" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="11" class="sem-dados">Erro ao carregar dados: ${error.message}</td></tr>`;
     return;
   }
 
@@ -70,8 +70,15 @@ function classePotencial(potencial) {
   return mapa[potencial] || "";
 }
 
-/** Vermelho: M3, M2 e M1 zerados. Amarelo: só 1 dos 3 meses com produção. 2 ou 3 meses: normal. */
+/**
+ * Verde: Mês Atual atingiu ou superou a Meta (objetivo alcançado) — tem prioridade.
+ * Vermelho: M3, M2 e M1 zerados. Amarelo: só 1 dos 3 meses com produção. 2 ou 3 meses: normal.
+ */
 function classeLinha(loja) {
+  const meta = Number(loja.meta) || 0;
+  const mesAtual = Number(loja.mes_atual) || 0;
+  if (meta > 0 && mesAtual >= meta) return "linha-meta-atingida";
+
   const m3 = Number(loja.m3) || 0;
   const m2 = Number(loja.m2) || 0;
   const m1 = Number(loja.m1) || 0;
@@ -98,6 +105,7 @@ function atualizarSomasCabecalho(lojas) {
   document.getElementById("soma-m3").textContent = formatarNumero(soma("m3"));
   document.getElementById("soma-m2").textContent = formatarNumero(soma("m2"));
   document.getElementById("soma-m1").textContent = formatarNumero(soma("m1"));
+  document.getElementById("soma-mes-atual").textContent = formatarNumero(soma("mes_atual"));
   document.getElementById("soma-meta").textContent = formatarNumero(soma("meta"));
 }
 
@@ -133,7 +141,7 @@ function renderizarTabela(lojas) {
   contador.textContent = `${lojas.length} loja${lojas.length === 1 ? "" : "s"}`;
 
   if (lojas.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="10" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="11" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
     return;
   }
 
@@ -148,6 +156,7 @@ function renderizarTabela(lojas) {
       <td>${formatarNumero(l.m3)}</td>
       <td>${formatarNumero(l.m2)}</td>
       <td>${formatarNumero(l.m1)}</td>
+      <td>${formatarNumero(l.mes_atual)}</td>
       <td><input type="number" min="0" class="input-meta" data-dn="${l.dn}" value="${l.meta ?? 0}"></td>
     </tr>
   `).join("");
@@ -190,6 +199,11 @@ async function onEditarMeta(evento) {
   const loja = LOJAS_CACHE.find((l) => l.dn === dn);
   if (loja) loja.meta = novaMeta;
   atualizarSomasCabecalho(obterLinhasExibidas());
+
+  if (loja) {
+    const linhaEl = document.querySelector(`#tabela-corpo tr[data-dn="${dn}"]`);
+    if (linhaEl) linhaEl.className = classeLinha(loja);
+  }
 }
 
 function aplicarFiltroBusca() {
