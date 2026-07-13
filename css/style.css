@@ -405,6 +405,27 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* GCM: mesmo tratamento de corte + reticências do Nome da Loja, coluna mais estreita */
+#tabela-lojas thead th[data-col="gcm"] {
+  width: 150px;
+}
+.col-gcm {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Meta: no máximo 2 dígitos, coluna bem mais estreita */
+#tabela-lojas thead th[data-col="meta"] {
+  width: 64px;
+}
+#tabela-lojas td:nth-child(11) {
+  width: 64px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
 thead .col-fixa { z-index: 3; }
 tbody .col-fixa { z-index: 1; }
 
@@ -441,8 +462,8 @@ tbody .col-fixa { z-index: 1; }
 .pot-f { background: #1A1A1A; color: var(--branco); }
 
 .input-meta {
-  width: 70px;
-  padding: 6px 8px;
+  width: 44px;
+  padding: 6px 4px;
   border: 1px solid var(--cinza-borda);
   border-radius: 6px;
   font-family: inherit;
