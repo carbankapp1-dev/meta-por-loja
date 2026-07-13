@@ -149,7 +149,7 @@ function renderizarTabela(lojas) {
     <tr data-dn="${l.dn}" class="${classeLinha(l)}">
       <td class="col-fixa col-dn">${l.dn}</td>
       <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
-      <td class="col-gcm" title="${escapeHtml(l.gcm || "")}">${escapeHtml(l.gcm || "")}</td>
+      <td class="col-gcm" title="${escapeHtml(l.gcm || "")}">${escapeHtml(truncarTexto(l.gcm, 25))}</td>
       <td>${formatarNumero(l.gravames_mercado)}</td>
       <td>${formatarPercentual(l.market_share)}</td>
       <td>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
@@ -170,6 +170,12 @@ function escapeHtml(texto) {
   const div = document.createElement("div");
   div.textContent = String(texto ?? "");
   return div.innerHTML;
+}
+
+/** Corta o texto em N caracteres e adiciona "..." — usado no nome do GCM. */
+function truncarTexto(texto, limite) {
+  const t = String(texto ?? "");
+  return t.length > limite ? t.slice(0, limite) + "..." : t;
 }
 
 async function onEditarMeta(evento) {
