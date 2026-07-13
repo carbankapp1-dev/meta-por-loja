@@ -149,7 +149,7 @@ function renderizarTabela(lojas) {
     <tr data-dn="${l.dn}" class="${classeLinha(l)}">
       <td class="col-fixa col-dn">${l.dn}</td>
       <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
-      <td>${escapeHtml(l.gcm || "")}</td>
+      <td class="col-gcm" title="${escapeHtml(l.gcm || "")}">${escapeHtml(l.gcm || "")}</td>
       <td>${formatarNumero(l.gravames_mercado)}</td>
       <td>${formatarPercentual(l.market_share)}</td>
       <td>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
