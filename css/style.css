@@ -304,16 +304,18 @@ body {
 .th-filtro-ativo { color: var(--verde); }
 .th-filtro-abrindo { background: rgba(255,255,255,.2); color: var(--branco); }
 
-/* "Gravames Mercado", "Market Share" e "Potencial de Mercado": título quebra em 2 linhas,
-   e a coluna de Gravames Mercado fica só larga o suficiente pro título. */
+/* "Gravames Mercado", "Market Share", "Potencial de Mercado" e "Mês Atual": título
+   quebra em 2 linhas, e a coluna de Gravames Mercado fica só larga o suficiente pro título. */
 #tabela-lojas thead th[data-col="gravames_mercado"],
 #tabela-lojas thead th[data-col="market_share"],
-#tabela-lojas thead th[data-col="potencial"] {
+#tabela-lojas thead th[data-col="potencial"],
+#tabela-lojas thead th[data-col="mes_atual"] {
   white-space: normal;
 }
 #tabela-lojas thead th[data-col="gravames_mercado"] .th-titulo,
 #tabela-lojas thead th[data-col="market_share"] .th-titulo,
-#tabela-lojas thead th[data-col="potencial"] .th-titulo {
+#tabela-lojas thead th[data-col="potencial"] .th-titulo,
+#tabela-lojas thead th[data-col="mes_atual"] .th-titulo {
   white-space: normal;
   line-height: 1.25;
   word-break: keep-all;
@@ -322,6 +324,9 @@ body {
   width: 118px;
 }
 #tabela-lojas thead th[data-col="market_share"] {
+  width: 100px;
+}
+#tabela-lojas thead th[data-col="mes_atual"] {
   width: 100px;
 }
 #tabela-lojas td:nth-child(4) {
@@ -354,8 +359,9 @@ body {
   background: var(--branco);
 }
 
+/* Passar o mouse: cinza neutro (o verde ficou reservado pra indicar meta atingida) */
 #tabela-lojas tbody tr:hover td {
-  background: var(--verde-claro);
+  background: #EEF1F3;
 }
 
 /* Loja zerada nos 3 últimos meses (M3, M2 e M1 = 0) */
@@ -372,6 +378,14 @@ body {
 }
 #tabela-lojas tbody tr.linha-atencao:hover td {
   background: #FFEB94;
+}
+
+/* Meta atingida: Mês Atual >= Meta — tem prioridade sobre as cores acima */
+#tabela-lojas tbody tr.linha-meta-atingida td {
+  background: var(--verde-claro);
+}
+#tabela-lojas tbody tr.linha-meta-atingida:hover td {
+  background: #C7EDCF;
 }
 
 #tabela-lojas tbody tr:last-child td {
