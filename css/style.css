@@ -408,10 +408,10 @@ body {
 
 /* GCM: mesmo tratamento de corte + reticências do Nome da Loja, coluna mais estreita */
 #tabela-lojas thead th[data-col="gcm"] {
-  width: 150px;
+  width: 190px;
 }
 .col-gcm {
-  max-width: 150px;
+  max-width: 190px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
