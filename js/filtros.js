@@ -8,7 +8,7 @@ let FILTRO_SELECAO_TEMP = null;
 
 function rotuloValor(coluna, valor) {
   if (valor === null || valor === undefined || valor === "") return "(vazio)";
-  if (coluna === "gravames_mercado" || coluna === "m3" || coluna === "m2" || coluna === "m1" || coluna === "meta") {
+  if (coluna === "gravames_mercado" || coluna === "m3" || coluna === "m2" || coluna === "m1" || coluna === "mes_atual" || coluna === "meta") {
     return formatarNumero(valor);
   }
   if (coluna === "market_share") {
