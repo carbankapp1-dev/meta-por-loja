@@ -401,9 +401,6 @@ body {
 .col-nome {
   left: 70px;
   max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* GCM: mesmo tratamento de corte + reticências do Nome da Loja, coluna mais estreita */
@@ -412,10 +409,48 @@ body {
 }
 .col-gcm {
   max-width: 240px;
+}
+
+/* Células com ação (editar GCM / excluir loja): texto + ícone lado a lado,
+   ícone só aparece ao passar o mouse na célula */
+.celula-gerenciavel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.texto-truncado {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
+.icone-editar,
+.icone-excluir {
+  flex: 0 0 auto;
+  opacity: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 13px;
+  line-height: 1;
+  transition: opacity .12s, background .12s;
+}
+.celula-gerenciavel:hover .icone-editar,
+.celula-gerenciavel:hover .icone-excluir {
+  opacity: 1;
+}
+.icone-editar {
+  color: var(--azul-escuro-2);
+}
+.icone-editar:hover { background: var(--verde-claro); }
+.icone-excluir {
+  color: #C0392B;
+  font-weight: 700;
+}
+.icone-excluir:hover { background: #FFDCDC; }
 
 /* Meta: no máximo 2 dígitos, coluna bem mais estreita */
 #tabela-lojas thead th[data-col="meta"] {
@@ -570,3 +605,137 @@ tbody .col-fixa { z-index: 1; }
   border-color: var(--azul-escuro);
 }
 .filtro-acoes-rodape .filtro-aplicar:hover { background: var(--azul-escuro-2); }
+
+/* ===================== BOTÃO "TROCAR ATENDIMENTO" ===================== */
+
+.btn-upload-secundario {
+  background: var(--branco);
+  color: var(--azul-escuro);
+  border: 1px solid var(--azul-escuro);
+}
+.btn-upload-secundario:hover { background: var(--azul-escuro); color: var(--branco); }
+
+/* ===================== POPOVER: EDITAR GCM DA LOJA ===================== */
+
+.painel-editar-gcm {
+  width: 230px;
+}
+
+.painel-editar-gcm-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  margin-bottom: 6px;
+}
+
+#editar-gcm-select,
+#editar-gcm-novo-nome {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  margin-bottom: 10px;
+  background: var(--branco);
+}
+#editar-gcm-select:focus,
+#editar-gcm-novo-nome:focus { outline: 2px solid var(--verde); }
+
+/* ===================== MODAL: TROCA DE ATENDIMENTO EM MASSA ===================== */
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 45, 72, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-caixa {
+  background: var(--branco);
+  width: 100%;
+  max-width: 360px;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 20px 22px;
+}
+
+.modal-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-cabecalho h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--azul-escuro);
+}
+
+.modal-fechar {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--cinza-texto);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.modal-fechar:hover { background: var(--cinza-borda); }
+
+.modal-caixa label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  margin: 12px 0 6px;
+}
+.modal-caixa label:first-of-type { margin-top: 0; }
+
+.modal-caixa select,
+.modal-caixa input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--branco);
+}
+.modal-caixa select:focus,
+.modal-caixa input[type="text"]:focus { outline: 2px solid var(--verde); }
+
+.reatribuir-contagem {
+  font-size: 12px;
+  color: var(--verde-escuro);
+  font-weight: 600;
+  margin: 12px 0 0;
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+.modal-acoes button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--cinza-borda);
+  background: var(--branco);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.modal-acoes .filtro-aplicar {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  border-color: var(--azul-escuro);
+}
+.modal-acoes .filtro-aplicar:hover { background: var(--azul-escuro-2); }
