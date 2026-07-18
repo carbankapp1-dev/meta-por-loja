@@ -53,6 +53,7 @@ async function iniciar() {
   configurarUploads();
   configurarBarraRolagemTopo();
   configurarFiltrosColuna();
+  configurarGestaoLojas();
 
   document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
