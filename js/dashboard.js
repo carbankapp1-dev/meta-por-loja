@@ -145,11 +145,20 @@ function renderizarTabela(lojas) {
     return;
   }
 
+  const sessao = getSessao();
+  const podeGerenciar = ["admin", "coordenador", "regional"].includes(sessao.perfil);
+
   corpo.innerHTML = lojas.map((l) => `
     <tr data-dn="${l.dn}" class="${classeLinha(l)}">
       <td class="col-fixa col-dn">${l.dn}</td>
-      <td class="col-fixa col-nome" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</td>
-      <td class="col-gcm" title="${escapeHtml(l.gcm || "")}">${escapeHtml(truncarTexto(l.gcm, 25))}</td>
+      <td class="col-fixa col-nome celula-gerenciavel">
+        <span class="texto-truncado" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</span>
+        ${podeGerenciar ? `<button type="button" class="icone-excluir" data-dn="${l.dn}" title="Excluir loja">×</button>` : ""}
+      </td>
+      <td class="col-gcm celula-gerenciavel">
+        <span class="texto-truncado" title="${escapeHtml(l.gcm || "")}">${escapeHtml(truncarTexto(l.gcm, 25))}</span>
+        ${podeGerenciar ? `<button type="button" class="icone-editar" data-dn="${l.dn}" title="Trocar GCM">✎</button>` : ""}
+      </td>
       <td>${formatarNumero(l.gravames_mercado)}</td>
       <td>${formatarPercentual(l.market_share)}</td>
       <td>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
@@ -164,6 +173,21 @@ function renderizarTabela(lojas) {
   corpo.querySelectorAll(".input-meta").forEach((input) => {
     input.addEventListener("change", onEditarMeta);
   });
+
+  if (podeGerenciar) {
+    corpo.querySelectorAll(".icone-editar").forEach((botao) => {
+      botao.addEventListener("click", (e) => {
+        e.stopPropagation();
+        abrirEditorGcm(parseInt(botao.dataset.dn, 10), botao);
+      });
+    });
+    corpo.querySelectorAll(".icone-excluir").forEach((botao) => {
+      botao.addEventListener("click", (e) => {
+        e.stopPropagation();
+        confirmarExclusaoLoja(parseInt(botao.dataset.dn, 10));
+      });
+    });
+  }
 }
 
 function escapeHtml(texto) {
