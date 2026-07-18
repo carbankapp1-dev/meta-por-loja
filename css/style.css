@@ -411,23 +411,27 @@ body {
   max-width: 240px;
 }
 
-/* Células com ação (editar GCM / excluir loja): texto + ícone lado a lado,
-   ícone só aparece ao passar o mouse na célula */
-.celula-gerenciavel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+/* Células com ação (editar GCM / excluir loja): ícone fica sobreposto à
+   direita, sem tirar a célula do layout normal de tabela (display:flex
+   direto num <td> quebra o alinhamento de colunas em alguns navegadores).
+   col-nome já é sticky (serve de referência de posição pro ícone); col-gcm
+   não é sticky, então precisa do position:relative próprio. */
+.col-gcm.celula-gerenciavel {
+  position: relative;
 }
-.texto-truncado {
+.celula-gerenciavel .texto-truncado {
+  display: block;
+  padding-right: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  min-width: 0;
 }
 .icone-editar,
 .icone-excluir {
-  flex: 0 0 auto;
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
   opacity: 0;
   border: none;
   background: transparent;
