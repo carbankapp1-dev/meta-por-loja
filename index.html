@@ -72,6 +72,7 @@
       Novo Mês
       <input type="file" id="upload-novo-mes" accept=".xlsx,.xls" hidden>
     </label>
+    <button type="button" id="btn-abrir-reatribuir" class="btn-upload btn-upload-secundario">Trocar Atendimento</button>
     <span id="upload-status" class="upload-status"></span>
   </section>
 
@@ -182,6 +183,48 @@
   </div>
 </div>
 
+<!-- Popover de edição individual do GCM (lápis na célula) -->
+<div id="painel-editar-gcm" class="painel-filtro painel-editar-gcm oculto">
+  <label class="painel-editar-gcm-label">Novo GCM para esta loja:</label>
+  <select id="editar-gcm-select"></select>
+  <input type="text" id="editar-gcm-novo-nome" class="oculto" placeholder="Digite o nome do novo GCM">
+  <div class="filtro-acoes-rodape">
+    <button type="button" id="editar-gcm-cancelar">Cancelar</button>
+    <button type="button" id="editar-gcm-salvar" class="filtro-aplicar">Salvar</button>
+  </div>
+</div>
+
+<!-- Modal de troca de atendimento em massa -->
+<div id="modal-reatribuir" class="modal-fundo oculto">
+  <div class="modal-caixa">
+    <div class="modal-cabecalho">
+      <h3>Trocar Atendimento (em massa)</h3>
+      <button type="button" id="reatribuir-fechar" class="modal-fechar" title="Fechar">×</button>
+    </div>
+
+    <label>Nível</label>
+    <select id="reatribuir-nivel">
+      <option value="gcm">GCM</option>
+      <option value="coordenador">Coordenador</option>
+      <option value="regional">Regional</option>
+    </select>
+
+    <label>De (quem está saindo)</label>
+    <select id="reatribuir-de"></select>
+
+    <label>Para (quem está assumindo)</label>
+    <select id="reatribuir-para"></select>
+    <input type="text" id="reatribuir-para-novo" class="oculto" placeholder="Digite o nome de quem vai assumir">
+
+    <p id="reatribuir-contagem" class="reatribuir-contagem"></p>
+
+    <div class="modal-acoes">
+      <button type="button" id="reatribuir-cancelar">Cancelar</button>
+      <button type="button" id="reatribuir-confirmar" class="filtro-aplicar">Aplicar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="js/config.js"></script>
@@ -190,6 +233,7 @@
 <script src="js/auth.js"></script>
 <script src="js/filtros.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/gestao.js"></script>
 <script src="js/uploads.js"></script>
 <script src="js/app.js"></script>
 </body>
