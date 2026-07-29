@@ -102,6 +102,9 @@ function atualizarMesesCabecalho() {
 /** Soma M3/M2/M1/Meta da lista exibida (após filtros) e escreve nos cabeçalhos. */
 function atualizarSomasCabecalho(lojas) {
   const soma = (campo) => lojas.reduce((total, l) => total + (Number(l[campo]) || 0), 0);
+  document.getElementById("soma-gravames").textContent = formatarNumero(soma("gravames_mercado"));
+  const mediaMarketShare = lojas.length ? soma("market_share") / lojas.length : 0;
+  document.getElementById("soma-market-share").textContent = formatarPercentual(mediaMarketShare);
   document.getElementById("soma-m3").textContent = formatarNumero(soma("m3"));
   document.getElementById("soma-m2").textContent = formatarNumero(soma("m2"));
   document.getElementById("soma-m1").textContent = formatarNumero(soma("m1"));
