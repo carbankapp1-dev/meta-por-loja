@@ -25,13 +25,25 @@ create table if not exists lojas (
   coordenador text,
   regional text,
   gravames_mercado integer default 0,
+  market_share numeric default 0,             -- fração 0-1 (ex: 0.25 = 25%)
   potencial text,                            -- categoria: "0 GRAVAMES", "A. 1 GRAVAME", ...
   m3 integer default 0,
   m2 integer default 0,
   m1 integer default 0,
+  mes_m3 text,                                -- ex: "Abr/26"
+  mes_m2 text,
+  mes_m1 text,
+  mes_atual integer default 0,                 -- produção do mês corrente (atualização livre, sem rotação)
   meta integer default 0,
   atualizado_em timestamptz not null default now()
 );
+
+-- (se a tabela já existia de uma versão anterior, garante as colunas novas)
+alter table lojas add column if not exists mes_m3 text;
+alter table lojas add column if not exists mes_m2 text;
+alter table lojas add column if not exists mes_m1 text;
+alter table lojas add column if not exists market_share numeric default 0;
+alter table lojas add column if not exists mes_atual integer default 0;
 
 create index if not exists idx_lojas_gcm on lojas (gcm);
 create index if not exists idx_lojas_coordenador on lojas (coordenador);
@@ -186,6 +198,129 @@ $$;
 grant execute on function fn_update_meta(text, text, integer, integer) to anon;
 
 -- --------------------------------------------------------------------------
+-- FUNÇÃO: trocar o GCM de UMA loja (troca individual)
+-- Permitido para: admin, coordenador, regional — desde que a loja esteja
+-- dentro do escopo do usuário (admin não tem restrição de escopo).
+-- --------------------------------------------------------------------------
+
+create or replace function fn_editar_gcm_loja(p_nome text, p_senha text, p_dn integer, p_novo_gcm text)
+returns boolean
+language plpgsql
+security definer
+as $$
+declare
+  v_perfil text;
+  v_ref text;
+  v_ok boolean;
+begin
+  select perfil, nome_referencia into v_perfil, v_ref from _valida_usuario(p_nome, p_senha);
+
+  if v_perfil not in ('admin', 'coordenador', 'regional') then
+    raise exception 'sem permissão para trocar o GCM';
+  end if;
+
+  if v_perfil = 'admin' then
+    v_ok := true;
+  else
+    select case v_perfil
+      when 'coordenador' then (coordenador = v_ref)
+      when 'regional' then (regional = v_ref)
+      else false
+    end into v_ok
+    from lojas where dn = p_dn;
+  end if;
+
+  if not coalesce(v_ok, false) then
+    raise exception 'sem permissão para esta loja';
+  end if;
+
+  update lojas set gcm = p_novo_gcm, atualizado_em = now() where dn = p_dn;
+  return true;
+end;
+$$;
+
+grant execute on function fn_editar_gcm_loja(text, text, integer, text) to anon;
+
+-- --------------------------------------------------------------------------
+-- FUNÇÃO: troca de atendimento EM MASSA (admin only)
+-- p_nivel: 'gcm' | 'coordenador' | 'regional'
+-- Move todas as lojas que tinham p_valor_antigo naquele nível para p_valor_novo.
+-- --------------------------------------------------------------------------
+
+create or replace function fn_reatribuir_massa(
+  p_nome text, p_senha text, p_nivel text, p_valor_antigo text, p_valor_novo text
+)
+returns integer
+language plpgsql
+security definer
+as $$
+declare
+  v_perfil text;
+  v_count integer;
+begin
+  select perfil into v_perfil from _valida_usuario(p_nome, p_senha);
+  if v_perfil <> 'admin' then
+    raise exception 'apenas admin pode fazer troca em massa';
+  end if;
+
+  if p_nivel not in ('gcm', 'coordenador', 'regional') then
+    raise exception 'nível inválido: %', p_nivel;
+  end if;
+
+  execute format('update lojas set %I = $1, atualizado_em = now() where %I = $2', p_nivel, p_nivel)
+    using p_valor_novo, p_valor_antigo;
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+
+grant execute on function fn_reatribuir_massa(text, text, text, text, text) to anon;
+
+-- --------------------------------------------------------------------------
+-- FUNÇÃO: excluir uma loja (ex: loja fechou)
+-- Permitido para: admin, coordenador, regional — desde que dentro do escopo.
+-- --------------------------------------------------------------------------
+
+create or replace function fn_excluir_loja(p_nome text, p_senha text, p_dn integer)
+returns boolean
+language plpgsql
+security definer
+as $$
+declare
+  v_perfil text;
+  v_ref text;
+  v_ok boolean;
+begin
+  select perfil, nome_referencia into v_perfil, v_ref from _valida_usuario(p_nome, p_senha);
+
+  if v_perfil not in ('admin', 'coordenador', 'regional') then
+    raise exception 'sem permissão para excluir lojas';
+  end if;
+
+  if v_perfil = 'admin' then
+    v_ok := true;
+  else
+    select case v_perfil
+      when 'coordenador' then (coordenador = v_ref)
+      when 'regional' then (regional = v_ref)
+      else false
+    end into v_ok
+    from lojas where dn = p_dn;
+  end if;
+
+  if not coalesce(v_ok, false) then
+    raise exception 'sem permissão para esta loja';
+  end if;
+
+  delete from lojas where dn = p_dn;
+  return true;
+end;
+$$;
+
+grant execute on function fn_excluir_loja(text, text, integer) to anon;
+
+-- --------------------------------------------------------------------------
 -- FUNÇÃO: upload "Lojas" (PARAM - REGIONAL) — admin only
 -- p_rows: jsonb array de {dn, nome_loja, gcm, coordenador, regional}
 -- --------------------------------------------------------------------------
@@ -232,8 +367,10 @@ grant execute on function fn_upload_lojas(text, text, jsonb) to anon;
 
 -- --------------------------------------------------------------------------
 -- FUNÇÃO: upload "Potencial" — admin only
--- p_rows: jsonb array de {dn, gravames_mercado, potencial}
+-- p_rows: jsonb array de {dn, gravames_mercado, potencial, market_share}
 -- --------------------------------------------------------------------------
+
+drop function if exists fn_upload_potencial(text, text, jsonb);
 
 create or replace function fn_upload_potencial(p_nome text, p_senha text, p_rows jsonb)
 returns integer
@@ -254,12 +391,14 @@ begin
     select
       (r->>'dn')::integer as dn,
       (r->>'gravames_mercado')::integer as gravames_mercado,
-      r->>'potencial' as potencial
+      r->>'potencial' as potencial,
+      (r->>'market_share')::numeric as market_share
     from jsonb_array_elements(p_rows) as r
   )
   update lojas l
   set gravames_mercado = d.gravames_mercado,
       potencial = d.potencial,
+      market_share = d.market_share,
       atualizado_em = now()
   from dados d
   where l.dn = d.dn;
@@ -273,10 +412,12 @@ grant execute on function fn_upload_potencial(text, text, jsonb) to anon;
 
 -- --------------------------------------------------------------------------
 -- FUNÇÃO: atualizar M1 direto, sem rotação (ajuste dentro do mês) — admin only
--- p_rows: jsonb array de {dn, contratos}
+-- p_rows: jsonb array de {dn, contratos} | p_mes: rótulo do mês, ex "Jun/26"
 -- --------------------------------------------------------------------------
 
-create or replace function fn_update_m1(p_nome text, p_senha text, p_rows jsonb)
+drop function if exists fn_update_m1(text, text, jsonb);
+
+create or replace function fn_update_m1(p_nome text, p_senha text, p_rows jsonb, p_mes text default null)
 returns integer
 language plpgsql
 security definer
@@ -298,6 +439,7 @@ begin
   )
   update lojas l
   set m1 = d.contratos,
+      mes_m1 = coalesce(p_mes, l.mes_m1),
       atualizado_em = now()
   from dados d
   where l.dn = d.dn;
@@ -307,14 +449,16 @@ begin
 end;
 $$;
 
-grant execute on function fn_update_m1(text, text, jsonb) to anon;
+grant execute on function fn_update_m1(text, text, jsonb, text) to anon;
 
 -- --------------------------------------------------------------------------
 -- FUNÇÃO: atualizar M2 direto, sem rotação — admin only
--- p_rows: jsonb array de {dn, contratos}
+-- p_rows: jsonb array de {dn, contratos} | p_mes: rótulo do mês
 -- --------------------------------------------------------------------------
 
-create or replace function fn_update_m2(p_nome text, p_senha text, p_rows jsonb)
+drop function if exists fn_update_m2(text, text, jsonb);
+
+create or replace function fn_update_m2(p_nome text, p_senha text, p_rows jsonb, p_mes text default null)
 returns integer
 language plpgsql
 security definer
@@ -336,6 +480,7 @@ begin
   )
   update lojas l
   set m2 = d.contratos,
+      mes_m2 = coalesce(p_mes, l.mes_m2),
       atualizado_em = now()
   from dados d
   where l.dn = d.dn;
@@ -345,14 +490,16 @@ begin
 end;
 $$;
 
-grant execute on function fn_update_m2(text, text, jsonb) to anon;
+grant execute on function fn_update_m2(text, text, jsonb, text) to anon;
 
 -- --------------------------------------------------------------------------
 -- FUNÇÃO: atualizar M3 direto, sem rotação — admin only
--- p_rows: jsonb array de {dn, contratos}
+-- p_rows: jsonb array de {dn, contratos} | p_mes: rótulo do mês
 -- --------------------------------------------------------------------------
 
-create or replace function fn_update_m3(p_nome text, p_senha text, p_rows jsonb)
+drop function if exists fn_update_m3(text, text, jsonb);
+
+create or replace function fn_update_m3(p_nome text, p_senha text, p_rows jsonb, p_mes text default null)
 returns integer
 language plpgsql
 security definer
@@ -374,6 +521,7 @@ begin
   )
   update lojas l
   set m3 = d.contratos,
+      mes_m3 = coalesce(p_mes, l.mes_m3),
       atualizado_em = now()
   from dados d
   where l.dn = d.dn;
@@ -383,15 +531,17 @@ begin
 end;
 $$;
 
-grant execute on function fn_update_m3(text, text, jsonb) to anon;
+grant execute on function fn_update_m3(text, text, jsonb, text) to anon;
 
 -- --------------------------------------------------------------------------
--- FUNÇÃO: "Novo Mês" — rotaciona M3<-M2, M2<-M1, M1<-0 para TODAS as lojas,
--- depois grava os contratos enviados em M1. — admin only
--- p_rows: jsonb array de {dn, contratos}
+-- FUNÇÃO: atualizar "Mês Atual" — admin only
+-- Coluna de acompanhamento livre, sem rotação (atualiza quantas vezes quiser
+-- durante o mês). p_rows: jsonb array de {dn, contratos}
 -- --------------------------------------------------------------------------
 
-create or replace function fn_novo_mes(p_nome text, p_senha text, p_rows jsonb)
+drop function if exists fn_update_mes_atual(text, text, jsonb);
+
+create or replace function fn_update_mes_atual(p_nome text, p_senha text, p_rows jsonb)
 returns integer
 language plpgsql
 security definer
@@ -405,8 +555,52 @@ begin
     raise exception 'apenas admin pode fazer este upload';
   end if;
 
-  -- rotação para todas as lojas
-  update lojas set m3 = m2, m2 = m1, m1 = 0, atualizado_em = now();
+  with dados as (
+    select
+      (r->>'dn')::integer as dn,
+      (r->>'contratos')::integer as contratos
+    from jsonb_array_elements(p_rows) as r
+  )
+  update lojas l
+  set mes_atual = d.contratos,
+      atualizado_em = now()
+  from dados d
+  where l.dn = d.dn;
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+
+grant execute on function fn_update_mes_atual(text, text, jsonb) to anon;
+
+-- --------------------------------------------------------------------------
+-- FUNÇÃO: "Novo Mês" — rotaciona M3<-M2, M2<-M1, M1<-0 para TODAS as lojas,
+-- depois grava os contratos enviados em M1. — admin only
+-- p_rows: jsonb array de {dn, contratos} | p_mes: rótulo do novo mês (M1)
+-- --------------------------------------------------------------------------
+
+drop function if exists fn_novo_mes(text, text, jsonb);
+
+create or replace function fn_novo_mes(p_nome text, p_senha text, p_rows jsonb, p_mes text default null)
+returns integer
+language plpgsql
+security definer
+as $$
+declare
+  v_perfil text;
+  v_count integer;
+begin
+  select perfil into v_perfil from _valida_usuario(p_nome, p_senha);
+  if v_perfil <> 'admin' then
+    raise exception 'apenas admin pode fazer este upload';
+  end if;
+
+  -- rotação para todas as lojas (números e rótulos de mês)
+  update lojas
+  set m3 = m2, m2 = m1, m1 = 0,
+      mes_m3 = mes_m2, mes_m2 = mes_m1, mes_m1 = null,
+      atualizado_em = now();
 
   -- grava contratos do novo mês em M1 apenas para as lojas enviadas
   with dados as (
@@ -417,6 +611,7 @@ begin
   )
   update lojas l
   set m1 = d.contratos,
+      mes_m1 = p_mes,
       atualizado_em = now()
   from dados d
   where l.dn = d.dn;
@@ -426,7 +621,7 @@ begin
 end;
 $$;
 
-grant execute on function fn_novo_mes(text, text, jsonb) to anon;
+grant execute on function fn_novo_mes(text, text, jsonb, text) to anon;
 
 -- ==========================================================================
 -- COMO CRIAR USUÁRIOS (rode manualmente, um de cada vez, trocando os dados)
