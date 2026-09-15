@@ -14,6 +14,9 @@ function rotuloValor(coluna, valor) {
   if (coluna === "market_share") {
     return formatarPercentual(valor);
   }
+  if (coluna === "cdc_premiado") {
+    return valor ? "Sim" : "Não";
+  }
   return String(valor);
 }
 
