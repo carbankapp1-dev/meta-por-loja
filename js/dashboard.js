@@ -7,7 +7,7 @@ let LOJAS_CACHE = [];
 async function carregarLojas() {
   const sessao = getSessao();
   const corpo = document.getElementById("tabela-corpo");
-  corpo.innerHTML = `<tr><td colspan="11" class="carregando">Carregando...</td></tr>`;
+  corpo.innerHTML = `<tr><td colspan="12" class="carregando">Carregando...</td></tr>`;
 
   const TAMANHO_PAGINA = 1000; // limite padrão do Supabase por requisição
   let todas = [];
@@ -110,6 +110,8 @@ function atualizarSomasCabecalho(lojas) {
   document.getElementById("soma-m1").textContent = formatarNumero(soma("m1"));
   document.getElementById("soma-mes-atual").textContent = formatarNumero(soma("mes_atual"));
   document.getElementById("soma-meta").textContent = formatarNumero(soma("meta"));
+  const totalCdcPremiado = lojas.reduce((total, l) => total + (l.cdc_premiado ? 1 : 0), 0);
+  document.getElementById("soma-cdc-premiado").textContent = formatarNumero(totalCdcPremiado);
 }
 
 /** Combina filtros de coluna + busca de texto e devolve a lista a ser exibida. */
@@ -144,7 +146,7 @@ function renderizarTabela(lojas) {
   contador.textContent = `${lojas.length} loja${lojas.length === 1 ? "" : "s"}`;
 
   if (lojas.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="11" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="12" class="sem-dados">Nenhuma loja encontrada.</td></tr>`;
     return;
   }
 
@@ -170,11 +172,16 @@ function renderizarTabela(lojas) {
       <td>${formatarNumero(l.m1)}</td>
       <td>${formatarNumero(l.mes_atual)}</td>
       <td><input type="number" min="0" class="input-meta" data-dn="${l.dn}" value="${l.meta ?? 0}"></td>
+      <td class="celula-cdc-premiado"><input type="checkbox" class="input-cdc-premiado" data-dn="${l.dn}" ${l.cdc_premiado ? "checked" : ""}></td>
     </tr>
   `).join("");
 
   corpo.querySelectorAll(".input-meta").forEach((input) => {
     input.addEventListener("change", onEditarMeta);
+  });
+
+  corpo.querySelectorAll(".input-cdc-premiado").forEach((checkbox) => {
+    checkbox.addEventListener("change", onEditarCdcPremiado);
   });
 
   if (podeGerenciar) {
@@ -237,6 +244,35 @@ async function onEditarMeta(evento) {
     const linhaEl = document.querySelector(`#tabela-corpo tr[data-dn="${dn}"]`);
     if (linhaEl) linhaEl.className = classeLinha(loja);
   }
+}
+
+async function onEditarCdcPremiado(evento) {
+  const checkbox = evento.target;
+  const dn = parseInt(checkbox.dataset.dn, 10);
+  const novoValor = checkbox.checked;
+  const sessao = getSessao();
+  const valorAnterior = !novoValor;
+
+  checkbox.disabled = true;
+
+  const { error } = await supabaseClient.rpc("fn_update_cdc_premiado", {
+    p_nome: sessao.nome,
+    p_senha: sessao.senha,
+    p_dn: dn,
+    p_valor: novoValor,
+  });
+
+  checkbox.disabled = false;
+
+  if (error) {
+    checkbox.checked = valorAnterior;
+    alert("Não foi possível salvar o CDC Premiado: " + error.message);
+    return;
+  }
+
+  const loja = LOJAS_CACHE.find((l) => l.dn === dn);
+  if (loja) loja.cdc_premiado = novoValor;
+  atualizarSomasCabecalho(obterLinhasExibidas());
 }
 
 function aplicarFiltroBusca() {
