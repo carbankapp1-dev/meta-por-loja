@@ -469,6 +469,23 @@ body {
 thead .col-fixa { z-index: 3; }
 tbody .col-fixa { z-index: 1; }
 
+/* CDC Premiado: coluna estreita, só cabe o checkbox */
+#tabela-lojas thead th[data-col="cdc_premiado"] {
+  width: 90px;
+}
+#tabela-lojas td:nth-child(12) {
+  width: 90px;
+}
+.celula-cdc-premiado {
+  text-align: center;
+}
+.input-cdc-premiado {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  accent-color: var(--verde);
+}
+
 /* Da coluna "Gravames Mercado" até "Meta": tudo centralizado */
 #tabela-lojas th:nth-child(n+4),
 #tabela-lojas td:nth-child(n+4) {
