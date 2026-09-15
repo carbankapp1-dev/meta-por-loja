@@ -1,0 +1,763 @@
+:root {
+  --azul-escuro: #0C2D48;
+  --azul-escuro-2: #123A5C;
+  --verde-claro: #DFF5E1;
+  --verde: #3FAE6A;
+  --verde-escuro: #2C8C53;
+  --branco: #FFFFFF;
+  --cinza-texto: #4A5560;
+  --cinza-borda: #E3E8EC;
+  --sombra: 0 4px 16px rgba(12, 45, 72, 0.08);
+  --raio: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: var(--verde-claro);
+  color: var(--azul-escuro);
+}
+
+.oculto { display: none !important; }
+
+/* ===================== LOGIN ===================== */
+
+.tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--azul-escuro) 0%, var(--azul-escuro-2) 55%, var(--verde-escuro) 130%);
+}
+
+.login-card {
+  background: var(--branco);
+  padding: 40px 36px;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-logo {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--azul-escuro);
+}
+.login-logo span { color: var(--verde-escuro); }
+
+.login-sub {
+  margin: 4px 0 24px;
+  font-size: 13px;
+  color: var(--cinza-texto);
+}
+
+#form-login label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 14px 0 6px;
+}
+
+#form-login input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+#form-login input:focus {
+  outline: 2px solid var(--verde);
+  border-color: var(--verde);
+}
+
+#btn-login {
+  width: 100%;
+  margin-top: 22px;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: var(--azul-escuro);
+  color: var(--branco);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .15s;
+}
+#btn-login:hover { background: var(--azul-escuro-2); }
+
+.login-erro {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #C0392B;
+  min-height: 16px;
+}
+
+/* ===================== APP / TOPBAR ===================== */
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.topbar-titulo {
+  font-size: 19px;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+.topbar-titulo span { color: var(--verde); }
+
+.topbar-usuario {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,.85);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.topbar-separador {
+  opacity: .5;
+}
+
+.contador-lojas {
+  white-space: nowrap;
+}
+
+.topbar-espaco {
+  flex: 1;
+}
+
+.topbar-busca {
+  flex: 0 0 auto;
+  width: 200px;
+  padding: 7px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.08);
+  color: var(--branco);
+  font-family: inherit;
+  font-size: 12px;
+}
+.topbar-busca::placeholder { color: rgba(255,255,255,.55); }
+.topbar-busca:focus { outline: 2px solid var(--verde); background: rgba(255,255,255,.14); }
+
+#btn-logout {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.4);
+  color: var(--branco);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: inherit;
+  cursor: pointer;
+  font-size: 13px;
+  flex: 0 0 auto;
+  transition: background .15s;
+}
+#btn-logout:hover { background: rgba(255,255,255,.12); }
+
+/* ===================== UPLOADS ===================== */
+
+.barra-uploads {
+  background: var(--branco);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--cinza-borda);
+}
+
+.uploads-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  margin-right: 4px;
+}
+
+.btn-upload {
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+  border: 1px solid var(--verde);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.btn-upload:hover { background: var(--verde); color: var(--branco); }
+
+.btn-upload-destaque {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  border-color: var(--azul-escuro);
+}
+.btn-upload-destaque:hover { background: var(--azul-escuro-2); }
+
+.upload-status {
+  font-size: 12px;
+  color: var(--cinza-texto);
+  margin-left: 8px;
+}
+
+/* ===================== TABELA ===================== */
+
+.tabela-area {
+  flex: 1;
+  min-height: 0;
+  padding: 0 28px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-topo {
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 16px;
+  margin-bottom: 6px;
+  flex: 0 0 auto;
+}
+.scroll-topo-interno {
+  height: 1px;
+}
+
+.tabela-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+}
+
+#tabela-lojas {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--branco);
+  font-size: 13px;
+}
+
+#tabela-lojas thead th {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.th-linha {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 8px;
+  padding: 0 20px; /* espaço reservado dos dois lados pro ícone de filtro não cortar o título */
+}
+
+.th-titulo {
+  font-size: 13px;
+  text-align: center;
+}
+
+.th-filtro {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,.65);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background .15s, color .15s;
+}
+.th-filtro:hover { background: rgba(255,255,255,.15); color: var(--branco); }
+.th-filtro-ativo { color: var(--verde); }
+.th-filtro-abrindo { background: rgba(255,255,255,.2); color: var(--branco); }
+
+/* "Gravames Mercado", "Market Share", "Potencial de Mercado" e "Mês Atual": título
+   quebra em 2 linhas, e a coluna de Gravames Mercado fica só larga o suficiente pro título. */
+#tabela-lojas thead th[data-col="gravames_mercado"],
+#tabela-lojas thead th[data-col="market_share"],
+#tabela-lojas thead th[data-col="potencial"],
+#tabela-lojas thead th[data-col="mes_atual"] {
+  white-space: normal;
+}
+#tabela-lojas thead th[data-col="gravames_mercado"] .th-titulo,
+#tabela-lojas thead th[data-col="market_share"] .th-titulo,
+#tabela-lojas thead th[data-col="potencial"] .th-titulo,
+#tabela-lojas thead th[data-col="mes_atual"] .th-titulo {
+  white-space: normal;
+  line-height: 1.25;
+  word-break: keep-all;
+}
+#tabela-lojas thead th[data-col="gravames_mercado"] {
+  width: 118px;
+}
+#tabela-lojas thead th[data-col="market_share"] {
+  width: 100px;
+}
+#tabela-lojas thead th[data-col="mes_atual"] {
+  width: 100px;
+}
+#tabela-lojas td:nth-child(4) {
+  width: 118px;
+}
+#tabela-lojas td:nth-child(5) {
+  width: 100px;
+}
+
+.th-mes {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--verde);
+  margin-top: 2px;
+  text-align: center;
+}
+
+.th-soma {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--branco);
+  margin-top: 2px;
+  text-align: center;
+}
+
+#tabela-lojas tbody td {
+  padding: 4px 14px;
+  line-height: 1.15;
+  border-bottom: 1px solid var(--cinza-borda);
+  white-space: nowrap;
+  background: var(--branco);
+}
+
+/* Passar o mouse: cinza neutro (o verde ficou reservado pra indicar meta atingida) */
+#tabela-lojas tbody tr:hover td {
+  background: #EEF1F3;
+}
+
+/* Loja zerada nos 3 últimos meses (M3, M2 e M1 = 0) */
+#tabela-lojas tbody tr.linha-zerada td {
+  background: #FFDCDC;
+}
+#tabela-lojas tbody tr.linha-zerada:hover td {
+  background: #FFC9C9;
+}
+
+/* Loja com pelo menos um contrato em M3, M2 ou M1 */
+#tabela-lojas tbody tr.linha-atencao td {
+  background: #FFF3B8;
+}
+#tabela-lojas tbody tr.linha-atencao:hover td {
+  background: #FFEB94;
+}
+
+/* Meta atingida: Mês Atual >= Meta — tem prioridade sobre as cores acima */
+#tabela-lojas tbody tr.linha-meta-atingida td {
+  background: var(--verde-claro);
+}
+#tabela-lojas tbody tr.linha-meta-atingida:hover td {
+  background: #C7EDCF;
+}
+
+#tabela-lojas tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Colunas fixas (DN e Nome da Loja) ao rolar horizontalmente */
+.col-fixa {
+  position: sticky;
+  left: 0;
+}
+.col-dn { left: 0; }
+.col-nome {
+  left: 70px;
+  max-width: 220px;
+}
+
+/* GCM: mesmo tratamento de corte + reticências do Nome da Loja, coluna mais estreita */
+#tabela-lojas thead th[data-col="gcm"] {
+  width: 240px;
+}
+.col-gcm {
+  max-width: 240px;
+}
+
+/* Células com ação (editar GCM / excluir loja): ícone fica sobreposto à
+   direita, sem tirar a célula do layout normal de tabela (display:flex
+   direto num <td> quebra o alinhamento de colunas em alguns navegadores).
+   col-nome já é sticky (serve de referência de posição pro ícone); col-gcm
+   não é sticky, então precisa do position:relative próprio. */
+.col-gcm.celula-gerenciavel {
+  position: relative;
+}
+.celula-gerenciavel .texto-truncado {
+  display: block;
+  padding-right: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.icone-editar,
+.icone-excluir {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 13px;
+  line-height: 1;
+  transition: opacity .12s, background .12s;
+}
+.celula-gerenciavel:hover .icone-editar,
+.celula-gerenciavel:hover .icone-excluir {
+  opacity: 1;
+}
+.icone-editar {
+  color: var(--azul-escuro-2);
+}
+.icone-editar:hover { background: var(--verde-claro); }
+.icone-excluir {
+  color: #C0392B;
+  font-weight: 700;
+}
+.icone-excluir:hover { background: #FFDCDC; }
+
+/* Meta: no máximo 2 dígitos, coluna bem mais estreita */
+#tabela-lojas thead th[data-col="meta"] {
+  width: 64px;
+}
+#tabela-lojas td:nth-child(11) {
+  width: 64px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+thead .col-fixa { z-index: 3; }
+tbody .col-fixa { z-index: 1; }
+
+/* CDC Premiado: coluna estreita, só cabe o checkbox */
+#tabela-lojas thead th[data-col="cdc_premiado"] {
+  width: 90px;
+}
+#tabela-lojas td:nth-child(12) {
+  width: 90px;
+}
+.celula-cdc-premiado {
+  text-align: center;
+}
+.input-cdc-premiado {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  accent-color: var(--verde);
+}
+
+/* Da coluna "Gravames Mercado" até "Meta": tudo centralizado */
+#tabela-lojas th:nth-child(n+4),
+#tabela-lojas td:nth-child(n+4) {
+  text-align: center;
+}
+
+.carregando, .sem-dados {
+  text-align: center;
+  padding: 30px !important;
+  color: var(--cinza-texto);
+}
+
+.badge-potencial {
+  display: inline-block;
+  width: 140px;
+  padding: 1px 6px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Formatação condicional por faixa de gravames (mesmas cores da legenda) */
+.pot-0 { background: #E74C3C; color: var(--branco); }
+.pot-a { background: #E67E22; color: var(--branco); }
+.pot-b { background: #F1C40F; color: #5C4400; }
+.pot-c { background: #90D5FF; color: #063A5C; }
+.pot-d { background: #16A085; color: var(--branco); }
+.pot-e { background: #2980B9; color: var(--branco); }
+.pot-f { background: #1A1A1A; color: var(--branco); }
+
+.input-meta {
+  width: 44px;
+  padding: 2px 4px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  text-align: center;
+}
+.input-meta:focus { outline: 2px solid var(--verde); }
+.input-meta.salvando { border-color: var(--verde); }
+.input-meta.erro { border-color: #C0392B; }
+
+@media (max-width: 720px) {
+  .topbar, .barra-uploads, .tabela-wrap { padding-left: 14px; padding-right: 14px; }
+  .topbar { flex-wrap: wrap; row-gap: 10px; }
+  .topbar-espaco { display: none; }
+  .topbar-busca { flex: 1 1 100%; width: auto; order: 3; }
+}
+
+/* ===================== PAINEL DE FILTRO (estilo Excel) ===================== */
+
+.painel-filtro {
+  position: absolute;
+  width: 240px;
+  background: var(--branco);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(12, 45, 72, 0.25);
+  border: 1px solid var(--cinza-borda);
+  padding: 10px;
+  z-index: 50;
+  font-size: 13px;
+}
+
+#filtro-pesquisa-coluna {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+#filtro-pesquisa-coluna:focus { outline: 2px solid var(--verde); }
+
+.filtro-acoes-topo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.filtro-acoes-topo button {
+  background: none;
+  border: none;
+  color: var(--azul-escuro-2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.filtro-acoes-topo button:hover { text-decoration: underline; }
+
+.filtro-lista-valores {
+  max-height: 220px;
+  overflow-y: auto;
+  border-top: 1px solid var(--cinza-borda);
+  border-bottom: 1px solid var(--cinza-borda);
+  padding: 6px 0;
+  margin-bottom: 8px;
+}
+
+.filtro-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.filtro-item:hover { background: var(--verde-claro); }
+.filtro-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filtro-acoes-rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.filtro-acoes-rodape button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--cinza-borda);
+  background: var(--branco);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filtro-acoes-rodape .filtro-aplicar {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  border-color: var(--azul-escuro);
+}
+.filtro-acoes-rodape .filtro-aplicar:hover { background: var(--azul-escuro-2); }
+
+/* ===================== BOTÃO "TROCAR ATENDIMENTO" ===================== */
+
+.btn-upload-secundario {
+  background: var(--branco);
+  color: var(--azul-escuro);
+  border: 1px solid var(--azul-escuro);
+}
+.btn-upload-secundario:hover { background: var(--azul-escuro); color: var(--branco); }
+
+/* ===================== POPOVER: EDITAR GCM DA LOJA ===================== */
+
+.painel-editar-gcm {
+  width: 230px;
+}
+
+.painel-editar-gcm-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  margin-bottom: 6px;
+}
+
+#editar-gcm-select,
+#editar-gcm-novo-nome {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  margin-bottom: 10px;
+  background: var(--branco);
+}
+#editar-gcm-select:focus,
+#editar-gcm-novo-nome:focus { outline: 2px solid var(--verde); }
+
+/* ===================== MODAL: TROCA DE ATENDIMENTO EM MASSA ===================== */
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 45, 72, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-caixa {
+  background: var(--branco);
+  width: 100%;
+  max-width: 360px;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 20px 22px;
+}
+
+.modal-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-cabecalho h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--azul-escuro);
+}
+
+.modal-fechar {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--cinza-texto);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.modal-fechar:hover { background: var(--cinza-borda); }
+
+.modal-caixa label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  margin: 12px 0 6px;
+}
+.modal-caixa label:first-of-type { margin-top: 0; }
+
+.modal-caixa select,
+.modal-caixa input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--branco);
+}
+.modal-caixa select:focus,
+.modal-caixa input[type="text"]:focus { outline: 2px solid var(--verde); }
+
+.reatribuir-contagem {
+  font-size: 12px;
+  color: var(--verde-escuro);
+  font-weight: 600;
+  margin: 12px 0 0;
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+.modal-acoes button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--cinza-borda);
+  background: var(--branco);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.modal-acoes .filtro-aplicar {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  border-color: var(--azul-escuro);
+}
+.modal-acoes .filtro-aplicar:hover { background: var(--azul-escuro-2); }
