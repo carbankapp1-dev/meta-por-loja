@@ -187,57 +187,104 @@ body {
 .btn-toggle-uploads {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.4);
+  gap: 8px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.35);
   color: var(--branco);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  padding: 6px 14px;
-  border-radius: 6px;
-  transition: background .15s;
+  padding: 7px 16px;
+  border-radius: 8px;
+  transition: background .15s, border-color .15s;
 }
-.btn-toggle-uploads:hover { background: rgba(255,255,255,.12); }
+.btn-toggle-uploads:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.6); }
+.btn-toggle-uploads.aberto { background: rgba(255,255,255,.16); border-color: var(--verde); color: var(--branco); }
+.btn-toggle-uploads .icone-upload { flex: 0 0 auto; display: flex; }
 .seta-toggle {
   display: inline-block;
   transition: transform .15s;
   font-size: 11px;
+  opacity: .8;
 }
 .btn-toggle-uploads.aberto .seta-toggle { transform: rotate(180deg); }
 
 .uploads-conteudo {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   left: 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  flex-wrap: wrap;
-  width: max-content;
-  max-width: min(720px, 90vw);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(108px, 1fr));
+  gap: 6px 10px;
+  width: 480px;
+  max-width: 92vw;
   background: var(--branco);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(12, 45, 72, 0.3);
-  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 14px 36px rgba(12, 45, 72, 0.35);
+  padding: 18px 16px 14px;
   z-index: 40;
 }
 .uploads-conteudo.oculto { display: none; }
+
+.uploads-conteudo::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 22px;
+  width: 14px;
+  height: 14px;
+  background: var(--branco);
+  transform: rotate(45deg);
+  border-radius: 3px 0 0 0;
+  box-shadow: -2px -2px 4px rgba(12, 45, 72, 0.06);
+}
+
+.uploads-titulo {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--cinza-texto);
+  margin: 0 0 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--cinza-borda);
+}
 
 .upload-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  padding: 8px 4px 10px;
+  border-radius: 10px;
+  transition: background .15s;
 }
+.upload-item:hover { background: #F4FAF6; }
 
 .link-modelo {
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
   color: var(--cinza-texto);
-  text-decoration: underline;
+  text-decoration: none;
   white-space: nowrap;
 }
-.link-modelo:hover { color: var(--verde-escuro); }
+.link-modelo:hover { color: var(--verde-escuro); text-decoration: underline; }
+.link-modelo svg { flex: 0 0 auto; opacity: .8; }
+
+.upload-item-admin {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--cinza-borda);
+  margin-top: 6px;
+  padding-top: 12px;
+}
+.upload-item-admin .btn-upload {
+  width: auto;
+  padding: 8px 22px;
+  font-size: 13px;
+}
 
 .uploads-label {
   font-size: 13px;
@@ -250,11 +297,14 @@ body {
   background: var(--verde-claro);
   color: var(--verde-escuro);
   border: 1px solid var(--verde);
-  padding: 8px 16px;
+  padding: 8px 6px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
   transition: background .15s, color .15s;
 }
 .btn-upload:hover { background: var(--verde); color: var(--branco); }
@@ -270,7 +320,7 @@ body {
   font-size: 12px;
   color: var(--cinza-texto);
   margin-left: 8px;
-  flex-basis: 100%;
+  grid-column: 1 / -1;
 }
 
 /* ===================== TABELA ===================== */
@@ -587,7 +637,12 @@ tbody .col-fixa { z-index: 1; }
   .topbar { flex-wrap: wrap; row-gap: 10px; }
   .topbar-espaco { display: none; }
   .topbar-busca { flex: 1 1 100%; width: auto; order: 3; }
-  .uploads-conteudo { left: auto; right: 0; }
+  .uploads-conteudo {
+    left: auto;
+    right: 0;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    width: 260px;
+  }
 
   /* Mobile: só o DN fica congelado ao rolar a tabela (Nome da Loja rola
      junto), pra sobrar mais tela pra navegar. No desktop não muda. */

@@ -54,60 +54,64 @@
 
     <div id="barra-uploads" class="barra-uploads oculto">
       <button type="button" id="btn-toggle-uploads" class="btn-toggle-uploads" aria-expanded="false">
+        <span class="icone-upload">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M6 10l6-6 6 6"/><path d="M4 20h16"/></svg>
+        </span>
         <span>Uploads</span>
         <span class="seta-toggle">▾</span>
       </button>
       <div id="uploads-conteudo" class="uploads-conteudo oculto">
+        <p class="uploads-titulo">Atualizar planilhas</p>
         <div class="upload-item">
           <label class="btn-upload">
             Atualizar M3
             <input type="file" id="upload-m3" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
         <div class="upload-item">
           <label class="btn-upload">
             Atualizar M2
             <input type="file" id="upload-m2" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
         <div class="upload-item">
           <label class="btn-upload">
             Atualizar M1
             <input type="file" id="upload-m1" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
         <div class="upload-item">
           <label class="btn-upload">
             Mês Atual
             <input type="file" id="upload-mes-atual" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
         <div class="upload-item">
           <label class="btn-upload">
             Potencial
             <input type="file" id="upload-potencial" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
         <div class="upload-item">
           <label class="btn-upload">
             Lojas
             <input type="file" id="upload-lojas" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-lojas.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-lojas.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
         <div class="upload-item">
           <label class="btn-upload btn-upload-destaque">
             Novo Mês
             <input type="file" id="upload-novo-mes" accept=".xlsx,.xls" hidden>
           </label>
-          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>Baixar modelo</a>
         </div>
-        <div class="upload-item somente-admin">
+        <div class="upload-item upload-item-admin somente-admin">
           <button type="button" id="btn-abrir-reatribuir" class="btn-upload btn-upload-secundario">Trocar Atendimento</button>
         </div>
         <span id="upload-status" class="upload-status"></span>
