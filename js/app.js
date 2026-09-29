@@ -9,11 +9,25 @@ function mostrarApp(sessao) {
   document.getElementById("usuario-info").textContent =
     `${sessao.nome} · ${rotuloPerfil(sessao.perfil)}`;
 
-  if (sessao.perfil === "admin") {
-    document.getElementById("barra-uploads").classList.remove("oculto");
+  document.getElementById("barra-uploads").classList.remove("oculto");
+
+  if (sessao.perfil !== "admin") {
+    document.querySelectorAll(".somente-admin").forEach((el) => el.classList.add("oculto"));
   }
 
   carregarLojas();
+}
+
+function configurarToggleUploads() {
+  const btn = document.getElementById("btn-toggle-uploads");
+  const conteudo = document.getElementById("uploads-conteudo");
+
+  btn.addEventListener("click", () => {
+    const abrindo = conteudo.classList.contains("oculto");
+    conteudo.classList.toggle("oculto", !abrindo);
+    btn.classList.toggle("aberto", abrindo);
+    btn.setAttribute("aria-expanded", abrindo ? "true" : "false");
+  });
 }
 
 function mostrarLogin() {
@@ -51,6 +65,7 @@ function configurarBarraRolagemTopo() {
 
 async function iniciar() {
   configurarUploads();
+  configurarToggleUploads();
   configurarBarraRolagemTopo();
   configurarFiltrosColuna();
   configurarGestaoLojas();
