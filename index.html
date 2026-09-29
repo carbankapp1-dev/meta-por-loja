@@ -51,49 +51,73 @@
       <span class="topbar-separador">·</span>
       <span id="contador-lojas" class="contador-lojas"></span>
     </div>
+
+    <div id="barra-uploads" class="barra-uploads oculto">
+      <button type="button" id="btn-toggle-uploads" class="btn-toggle-uploads" aria-expanded="false">
+        <span>Uploads</span>
+        <span class="seta-toggle">▾</span>
+      </button>
+      <div id="uploads-conteudo" class="uploads-conteudo oculto">
+        <div class="upload-item">
+          <label class="btn-upload">
+            Atualizar M3
+            <input type="file" id="upload-m3" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item">
+          <label class="btn-upload">
+            Atualizar M2
+            <input type="file" id="upload-m2" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item">
+          <label class="btn-upload">
+            Atualizar M1
+            <input type="file" id="upload-m1" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item">
+          <label class="btn-upload">
+            Mês Atual
+            <input type="file" id="upload-mes-atual" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item">
+          <label class="btn-upload">
+            Potencial
+            <input type="file" id="upload-potencial" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item">
+          <label class="btn-upload">
+            Lojas
+            <input type="file" id="upload-lojas" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-lojas.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item">
+          <label class="btn-upload btn-upload-destaque">
+            Novo Mês
+            <input type="file" id="upload-novo-mes" accept=".xlsx,.xls" hidden>
+          </label>
+          <a href="modelos/modelo-planilha-producao.xlsx" download class="link-modelo">Baixar modelo</a>
+        </div>
+        <div class="upload-item somente-admin">
+          <button type="button" id="btn-abrir-reatribuir" class="btn-upload btn-upload-secundario">Trocar Atendimento</button>
+        </div>
+        <span id="upload-status" class="upload-status"></span>
+      </div>
+    </div>
+
     <div class="topbar-espaco"></div>
     <input type="text" id="filtro-busca" class="topbar-busca" placeholder="Buscar por...">
     <button id="btn-logout">Sair</button>
   </header>
-
-  <section id="barra-uploads" class="barra-uploads oculto">
-    <button type="button" id="btn-toggle-uploads" class="btn-toggle-uploads" aria-expanded="false">
-      <span>Uploads</span>
-      <span class="seta-toggle">▾</span>
-    </button>
-    <div id="uploads-conteudo" class="uploads-conteudo oculto">
-      <label class="btn-upload">
-        Atualizar M3
-        <input type="file" id="upload-m3" accept=".xlsx,.xls" hidden>
-      </label>
-      <label class="btn-upload">
-        Atualizar M2
-        <input type="file" id="upload-m2" accept=".xlsx,.xls" hidden>
-      </label>
-      <label class="btn-upload">
-        Atualizar M1
-        <input type="file" id="upload-m1" accept=".xlsx,.xls" hidden>
-      </label>
-      <label class="btn-upload">
-        Mês Atual
-        <input type="file" id="upload-mes-atual" accept=".xlsx,.xls" hidden>
-      </label>
-      <label class="btn-upload">
-        Potencial
-        <input type="file" id="upload-potencial" accept=".xlsx,.xls" hidden>
-      </label>
-      <label class="btn-upload">
-        Lojas
-        <input type="file" id="upload-lojas" accept=".xlsx,.xls" hidden>
-      </label>
-      <label class="btn-upload btn-upload-destaque">
-        Novo Mês
-        <input type="file" id="upload-novo-mes" accept=".xlsx,.xls" hidden>
-      </label>
-      <button type="button" id="btn-abrir-reatribuir" class="btn-upload btn-upload-secundario somente-admin">Trocar Atendimento</button>
-      <span id="upload-status" class="upload-status"></span>
-    </div>
-  </section>
 
   <main class="tabela-area">
     <div id="scroll-topo" class="scroll-topo">
