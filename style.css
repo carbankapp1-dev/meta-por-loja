@@ -181,13 +181,43 @@ body {
 
 .barra-uploads {
   background: var(--branco);
-  padding: 14px 28px;
+  padding: 10px 28px;
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
   border-bottom: 1px solid var(--cinza-borda);
 }
+
+.btn-toggle-uploads {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--cinza-texto);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.btn-toggle-uploads:hover { color: var(--azul-escuro); }
+.seta-toggle {
+  display: inline-block;
+  transition: transform .15s;
+  font-size: 11px;
+}
+.btn-toggle-uploads.aberto .seta-toggle { transform: rotate(180deg); }
+
+.uploads-conteudo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-top: 10px;
+}
+.uploads-conteudo.oculto { display: none; }
 
 .uploads-label {
   font-size: 13px;
