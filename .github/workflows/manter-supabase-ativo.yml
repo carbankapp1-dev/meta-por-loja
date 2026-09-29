@@ -1,0 +1,27 @@
+name: Manter Supabase ativo
+
+# O Supabase (plano gratuito) pausa o projeto após 7 dias sem nenhuma
+# requisição à API. Esse workflow faz uma chamada leve de tempos em
+# tempos só para "acordar" o projeto e resetar essa contagem.
+
+on:
+  schedule:
+    - cron: "0 12 */3 * *"   # a cada 3 dias, às 12:00 UTC (folga segura antes dos 7 dias)
+  workflow_dispatch:          # permite rodar manualmente em Actions > Run workflow
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar a API do Supabase
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/lojas?select=dn&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+          echo "Resposta da API do Supabase: HTTP $HTTP_STATUS"
+          # Qualquer resposta (200, 401, 403...) já prova que a requisição
+          # chegou ao projeto, o que é o suficiente para contar como atividade.
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
