@@ -21,12 +21,24 @@ function mostrarApp(sessao) {
 function configurarToggleUploads() {
   const btn = document.getElementById("btn-toggle-uploads");
   const conteudo = document.getElementById("uploads-conteudo");
+  const wrap = document.getElementById("barra-uploads");
 
-  btn.addEventListener("click", () => {
+  function fechar() {
+    conteudo.classList.add("oculto");
+    btn.classList.remove("aberto");
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
     const abrindo = conteudo.classList.contains("oculto");
     conteudo.classList.toggle("oculto", !abrindo);
     btn.classList.toggle("aberto", abrindo);
     btn.setAttribute("aria-expanded", abrindo ? "true" : "false");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!wrap.contains(e.target)) fechar();
   });
 }
 
