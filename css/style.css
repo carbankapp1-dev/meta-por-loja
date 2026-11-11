@@ -490,6 +490,16 @@ body {
   background: #C7EDCF;
 }
 
+/* Loja que NÃO veio na última planilha (provável erro no relatório).
+   Tem prioridade sobre todas as cores de linha acima. */
+#tabela-lojas tbody tr td.fora-planilha,
+#tabela-lojas tbody tr:hover td.fora-planilha {
+  background: #C0392B;
+  color: var(--branco);
+  font-weight: 700;
+  cursor: help;
+}
+
 #tabela-lojas tbody tr:last-child td {
   border-bottom: none;
 }
