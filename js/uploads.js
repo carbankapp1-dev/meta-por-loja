@@ -26,6 +26,17 @@ async function chamarRpcEmLotes(nomeRpc, sessao, campoLista, linhas, paramsExtra
   return total;
 }
 
+/** Recarrega a tabela e avisa quantas lojas da carteira não vieram na planilha. */
+async function finalizarUpload(mensagem, campoFora) {
+  await carregarLojas();
+  const fora = LOJAS_CACHE.filter((l) => l[campoFora]).length;
+  if (fora) {
+    mostrarStatusUpload(`${mensagem} ⚠ ${fora} loja${fora === 1 ? "" : "s"} da carteira não ${fora === 1 ? "veio" : "vieram"} na planilha (em vermelho na tabela).`, true);
+  } else {
+    mostrarStatusUpload(mensagem);
+  }
+}
+
 async function tratarUploadLojas(file) {
   const sessao = getSessao();
   mostrarStatusUpload("Lendo planilha de lojas...");
@@ -47,13 +58,12 @@ async function tratarUploadPotencial(file) {
   const dados = montarLinhasPotencial(producao);
 
   mostrarStatusUpload(`Enviando potencial de ${dados.length} lojas...`);
-  const total = await chamarRpcEmLotes("fn_upload_potencial", sessao, "p_rows", dados);
+  const total = await chamarRpcEmLotes("fn_upload_potencial", sessao, "p_rows", dados, {}, 500, "p_zerar");
 
-  mostrarStatusUpload(`✓ Potencial atualizado em ${total} lojas.`);
-  await carregarLojas();
+  await finalizarUpload(`✓ Potencial atualizado em ${total} lojas.`, "fora_potencial");
 }
 
-async function tratarUploadMes(file, nomeRpc, rotulo) {
+async function tratarUploadMes(file, nomeRpc, rotulo, campoFora) {
   const sessao = getSessao();
   mostrarStatusUpload(`Lendo planilha de ${rotulo}...`);
   const linhas = await lerPlanilha(file);
@@ -63,20 +73,19 @@ async function tratarUploadMes(file, nomeRpc, rotulo) {
   mostrarStatusUpload(`Atualizando ${rotulo} de ${dados.length} lojas${mes ? ` (${mes})` : ""}...`);
   const total = await chamarRpcEmLotes(nomeRpc, sessao, "p_rows", dados, { p_mes: mes || null }, 500, "p_zerar");
 
-  mostrarStatusUpload(`✓ ${rotulo} atualizado em ${total} lojas${mes ? ` — ${mes}` : ""}.`);
-  await carregarLojas();
+  await finalizarUpload(`✓ ${rotulo} atualizado em ${total} lojas${mes ? ` — ${mes}` : ""}.`, campoFora);
 }
 
 async function tratarUploadM1(file) {
-  await tratarUploadMes(file, "fn_update_m1", "M1");
+  await tratarUploadMes(file, "fn_update_m1", "M1", "fora_m1");
 }
 
 async function tratarUploadM2(file) {
-  await tratarUploadMes(file, "fn_update_m2", "M2");
+  await tratarUploadMes(file, "fn_update_m2", "M2", "fora_m2");
 }
 
 async function tratarUploadM3(file) {
-  await tratarUploadMes(file, "fn_update_m3", "M3");
+  await tratarUploadMes(file, "fn_update_m3", "M3", "fora_m3");
 }
 
 async function tratarUploadMesAtual(file) {
@@ -89,8 +98,7 @@ async function tratarUploadMesAtual(file) {
   mostrarStatusUpload(`Atualizando Mês Atual de ${dados.length} lojas...`);
   const total = await chamarRpcEmLotes("fn_update_mes_atual", sessao, "p_rows", dados, {}, 500, "p_zerar");
 
-  mostrarStatusUpload(`✓ Mês Atual atualizado em ${total} lojas.`);
-  await carregarLojas();
+  await finalizarUpload(`✓ Mês Atual atualizado em ${total} lojas.`, "fora_mes_atual");
 }
 
 async function tratarUploadNovoMes(file) {
@@ -113,8 +121,7 @@ async function tratarUploadNovoMes(file) {
   mostrarStatusUpload("Rotacionando M3/M2/M1 e gravando novos contratos...");
   const total = await chamarRpcEmLotes("fn_novo_mes", sessao, "p_rows", dados, { p_mes: mes || null }, 500, "p_rotacionar");
 
-  mostrarStatusUpload(`✓ Novo mês fechado${mes ? ` (${mes})` : ""}. ${total} lojas com M1 atualizado.`);
-  await carregarLojas();
+  await finalizarUpload(`✓ Novo mês fechado${mes ? ` (${mes})` : ""}. ${total} lojas com M1 atualizado.`, "fora_m1");
 }
 
 function configurarUploads() {

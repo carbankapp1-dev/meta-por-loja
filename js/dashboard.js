@@ -155,7 +155,7 @@ function renderizarTabela(lojas) {
 
   corpo.innerHTML = lojas.map((l) => `
     <tr data-dn="${l.dn}" class="${classeLinha(l)}">
-      <td class="col-fixa col-dn">${l.dn}</td>
+      <td class="col-fixa col-dn${planilhasFaltando(l).length ? " fora-planilha" : ""}"${tituloFora(planilhasFaltando(l))}>${l.dn}</td>
       <td class="col-fixa col-nome celula-gerenciavel">
         <span class="texto-truncado" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</span>
         ${podeGerenciar ? `<button type="button" class="icone-excluir" data-dn="${l.dn}" title="Excluir loja">×</button>` : ""}
@@ -164,13 +164,13 @@ function renderizarTabela(lojas) {
         <span class="texto-truncado" title="${escapeHtml(l.gcm || "")}">${escapeHtml(truncarTexto(l.gcm, 25))}</span>
         ${podeGerenciar ? `<button type="button" class="icone-editar" data-dn="${l.dn}" title="Trocar GCM">✎</button>` : ""}
       </td>
-      <td>${formatarNumero(l.gravames_mercado)}</td>
-      <td>${formatarPercentual(l.market_share)}</td>
-      <td>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
-      <td>${formatarNumero(l.m3)}</td>
-      <td>${formatarNumero(l.m2)}</td>
-      <td>${formatarNumero(l.m1)}</td>
-      <td>${formatarNumero(l.mes_atual)}</td>
+      <td${atribFora(l.fora_potencial, "Potencial")}>${formatarNumero(l.gravames_mercado)}</td>
+      <td${atribFora(l.fora_potencial, "Potencial")}>${formatarPercentual(l.market_share)}</td>
+      <td${atribFora(l.fora_potencial, "Potencial")}>${l.potencial ? `<span class="badge-potencial ${classePotencial(l.potencial)}">${escapeHtml(l.potencial)}</span>` : ""}</td>
+      <td${atribFora(l.fora_m3, rotuloPlanilha("M3", l.mes_m3))}>${formatarNumero(l.m3)}</td>
+      <td${atribFora(l.fora_m2, rotuloPlanilha("M2", l.mes_m2))}>${formatarNumero(l.m2)}</td>
+      <td${atribFora(l.fora_m1, rotuloPlanilha("M1", l.mes_m1))}>${formatarNumero(l.m1)}</td>
+      <td${atribFora(l.fora_mes_atual, "Mês Atual")}>${formatarNumero(l.mes_atual)}</td>
       <td><input type="number" min="0" class="input-meta" data-dn="${l.dn}" value="${l.meta ?? 0}"></td>
       <td class="celula-cdc-premiado"><input type="checkbox" class="input-cdc-premiado" data-dn="${l.dn}" ${l.cdc_premiado ? "checked" : ""}></td>
     </tr>
@@ -198,6 +198,35 @@ function renderizarTabela(lojas) {
       });
     });
   }
+}
+
+// -------------------- Loja que não veio na planilha (vermelho) --------------------
+
+/** "M1 (Out/26)" ou só "M1" se não houver mês. */
+function rotuloPlanilha(coluna, mes) {
+  return mes ? `${coluna} (${mes})` : coluna;
+}
+
+/** Lista das planilhas em que a loja não apareceu no último upload. */
+function planilhasFaltando(loja) {
+  const faltando = [];
+  if (loja.fora_potencial) faltando.push("Potencial");
+  if (loja.fora_m3) faltando.push(rotuloPlanilha("M3", loja.mes_m3));
+  if (loja.fora_m2) faltando.push(rotuloPlanilha("M2", loja.mes_m2));
+  if (loja.fora_m1) faltando.push(rotuloPlanilha("M1", loja.mes_m1));
+  if (loja.fora_mes_atual) faltando.push("Mês Atual");
+  return faltando;
+}
+
+function tituloFora(faltando) {
+  if (!faltando.length) return "";
+  return ` title="${escapeHtml("Loja não veio na planilha de: " + faltando.join(", "))}"`;
+}
+
+/** Atributos da célula: vermelho + dica ao passar o mouse quando a loja ficou fora da planilha. */
+function atribFora(fora, planilha) {
+  if (!fora) return "";
+  return ` class="fora-planilha" title="${escapeHtml(`Loja não veio na planilha de ${planilha}`)}"`;
 }
 
 function escapeHtml(texto) {
