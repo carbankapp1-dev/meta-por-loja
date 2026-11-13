@@ -170,7 +170,7 @@ function renderizarTabela(lojas) {
       <td${atribFora(l.fora_m3, rotuloPlanilha("M3", l.mes_m3))}>${formatarNumero(l.m3)}</td>
       <td${atribFora(l.fora_m2, rotuloPlanilha("M2", l.mes_m2))}>${formatarNumero(l.m2)}</td>
       <td${atribFora(l.fora_m1, rotuloPlanilha("M1", l.mes_m1))}>${formatarNumero(l.m1)}</td>
-      <td${atribFora(l.fora_mes_atual, "Mês Atual")}>${formatarNumero(l.mes_atual)}</td>
+      <td>${formatarNumero(l.mes_atual)}</td>
       <td><input type="number" min="0" class="input-meta" data-dn="${l.dn}" value="${l.meta ?? 0}"></td>
       <td class="celula-cdc-premiado"><input type="checkbox" class="input-cdc-premiado" data-dn="${l.dn}" ${l.cdc_premiado ? "checked" : ""}></td>
     </tr>
@@ -214,7 +214,7 @@ function planilhasFaltando(loja) {
   if (loja.fora_m3) faltando.push(rotuloPlanilha("M3", loja.mes_m3));
   if (loja.fora_m2) faltando.push(rotuloPlanilha("M2", loja.mes_m2));
   if (loja.fora_m1) faltando.push(rotuloPlanilha("M1", loja.mes_m1));
-  if (loja.fora_mes_atual) faltando.push("Mês Atual");
+  // Mês Atual: loja fora da planilha = 0 contratos (não é erro), então não entra aqui.
   return faltando;
 }
 

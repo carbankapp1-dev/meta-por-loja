@@ -169,3 +169,44 @@ function montarLinhasContratos(linhasProducao) {
     contratos: l.contratos || 0,
   }));
 }
+
+/**
+ * Planilha "Mês Atual" (Analítico de contratos pagos)
+ * Cada linha é UM contrato. A coluna DEALER vem como "60904-NOVA OPCAO VEICULOS".
+ * Conta quantas linhas cada loja (DN) tem — essa contagem é o Mês Atual.
+ * Devolve [{ dn, contratos }].
+ */
+function processarPlanilhaMesAtual(linhas) {
+  // O cabeçalho normalmente está na linha 1, mas aceitamos até a 10ª.
+  let iCabecalho = -1;
+  let iDealer = -1;
+  for (let i = 0; i < Math.min(linhas.length, 10); i++) {
+    const idx = acharColuna(linhas[i] || [], "DEALER");
+    if (idx !== -1) { iCabecalho = i; iDealer = idx; break; }
+  }
+  if (iDealer === -1) {
+    throw new Error("Não encontrei a coluna DEALER nesta planilha do Mês Atual.");
+  }
+
+  const contagem = new Map();
+  let vaziasSeguidas = 0;
+  const LIMITE_VAZIAS_SEGUIDAS = 500;
+
+  for (let i = iCabecalho + 1; i < linhas.length; i++) {
+    const linha = linhas[i];
+    const valor = linha ? linha[iDealer] : null;
+    if (valor === null || valor === undefined || String(valor).trim() === "") {
+      vaziasSeguidas++;
+      if (vaziasSeguidas >= LIMITE_VAZIAS_SEGUIDAS) break;
+      continue;
+    }
+    vaziasSeguidas = 0;
+    // DN = números do início ("60904-NOVA..." ou "60904 - NOVA..." -> 60904)
+    const m = String(valor).trim().match(/^(\d+)/);
+    if (!m) continue;
+    const dn = parseInt(m[1], 10);
+    contagem.set(dn, (contagem.get(dn) || 0) + 1);
+  }
+
+  return Array.from(contagem, ([dn, contratos]) => ({ dn, contratos }));
+}

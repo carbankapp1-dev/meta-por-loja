@@ -92,13 +92,14 @@ async function tratarUploadMesAtual(file) {
   const sessao = getSessao();
   mostrarStatusUpload("Lendo planilha do mês atual...");
   const linhas = await lerPlanilha(file);
-  const { linhas: producao } = processarPlanilhaProducao(linhas);
-  const dados = montarLinhasContratos(producao);
+  const dados = processarPlanilhaMesAtual(linhas);
+  if (!dados.length) throw new Error("Nenhum contrato encontrado na coluna DEALER.");
+  const totalContratos = dados.reduce((s, l) => s + l.contratos, 0);
 
-  mostrarStatusUpload(`Atualizando Mês Atual de ${dados.length} lojas...`);
+  mostrarStatusUpload(`Atualizando Mês Atual: ${totalContratos} contratos em ${dados.length} lojas...`);
   const total = await chamarRpcEmLotes("fn_update_mes_atual", sessao, "p_rows", dados, {}, 500, "p_zerar");
 
-  await finalizarUpload(`✓ Mês Atual atualizado em ${total} lojas.`, "fora_mes_atual");
+  await finalizarUpload(`✓ Mês Atual atualizado: ${totalContratos} contratos em ${total} lojas.`);
 }
 
 async function tratarUploadNovoMes(file) {
