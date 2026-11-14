@@ -100,7 +100,7 @@ async function confirmarExclusaoLoja(dn) {
 
   const confirmar = confirm(
     `Excluir permanentemente a loja "${loja.nome_loja}" (DN ${dn})?\n\n` +
-    "Essa ação não pode ser desfeita."
+    "Ela sai do Painel e da aba Visitas. Essa ação não pode ser desfeita."
   );
   if (!confirmar) return;
 
@@ -221,7 +221,113 @@ function configurarReatribuirMassa() {
   });
 }
 
+// -------------------- Incluir loja (manual) --------------------
+
+function abrirModalIncluirLoja() {
+  const sessao = getSessao();
+  const form = document.getElementById("form-incluir-loja");
+  form.reset();
+  document.getElementById("incluir-erro").textContent = "";
+
+  const select = document.getElementById("incluir-gcm");
+  const fixo = document.getElementById("incluir-gcm-fixo");
+  const novo = document.getElementById("incluir-gcm-novo");
+  novo.classList.add("oculto");
+
+  if (sessao.perfil === "gcm") {
+    // GCM: a loja entra na própria carteira
+    select.classList.add("oculto");
+    fixo.classList.remove("oculto");
+    fixo.textContent = sessao.nome_referencia || sessao.nome;
+  } else {
+    fixo.classList.add("oculto");
+    select.classList.remove("oculto");
+    const gcms = [...new Set(LOJAS_CACHE.map((l) => l.gcm).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "pt-BR"));
+    select.innerHTML =
+      `<option value="">-- selecione --</option>` +
+      gcms.map((g) => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join("") +
+      `<option value="__outro__">+ Outro (digitar nome)</option>`;
+  }
+
+  document.querySelectorAll(".incluir-so-admin").forEach((el) =>
+    el.classList.toggle("oculto", sessao.perfil !== "admin"));
+
+  document.getElementById("modal-incluir-loja").classList.remove("oculto");
+  document.getElementById("incluir-dn").focus();
+}
+
+function fecharModalIncluirLoja() {
+  document.getElementById("modal-incluir-loja").classList.add("oculto");
+}
+
+async function salvarInclusaoLoja(e) {
+  e.preventDefault();
+  const sessao = getSessao();
+  const erroEl = document.getElementById("incluir-erro");
+  const botao = document.getElementById("incluir-salvar");
+  const valor = (id) => document.getElementById(id).value.trim();
+
+  const dn = parseInt(valor("incluir-dn").replace(/\D/g, ""), 10);
+  const nomeLoja = valor("incluir-nome");
+  let gcm = null;
+  if (sessao.perfil !== "gcm") {
+    gcm = valor("incluir-gcm") === "__outro__" ? valor("incluir-gcm-novo") : valor("incluir-gcm");
+  }
+
+  erroEl.textContent = "";
+  if (!dn) { erroEl.textContent = "Informe o DN (só números)."; return; }
+  if (!nomeLoja) { erroEl.textContent = "Informe o nome da loja."; return; }
+  if (sessao.perfil !== "gcm" && !gcm) { erroEl.textContent = "Escolha o GCM da loja."; return; }
+
+  botao.disabled = true;
+  botao.textContent = "Salvando...";
+  const { error } = await supabaseClient.rpc("fn_incluir_loja", {
+    p_nome: sessao.nome,
+    p_senha: sessao.senha,
+    p_dn: dn,
+    p_nome_loja: nomeLoja,
+    p_gcm: gcm,
+    p_coordenador: sessao.perfil === "admin" ? valor("incluir-coordenador") || null : null,
+    p_regional: sessao.perfil === "admin" ? valor("incluir-regional") || null : null,
+    p_logradouro: valor("incluir-logradouro") || null,
+    p_numero: valor("incluir-numero") || null,
+    p_bairro: valor("incluir-bairro") || null,
+    p_cep: valor("incluir-cep") || null,
+  });
+  botao.disabled = false;
+  botao.textContent = "Incluir";
+
+  if (error) {
+    erroEl.textContent = error.message.replace(/^.*?ERROR:\s*/, "");
+    return;
+  }
+
+  fecharModalIncluirLoja();
+  await carregarLojas();
+  alert(`Loja ${nomeLoja.toUpperCase()} (DN ${dn}) incluída. Ela já aparece no Painel e na aba Visitas.`);
+}
+
+function configurarIncluirLoja() {
+  document.getElementById("btn-incluir-loja").addEventListener("click", abrirModalIncluirLoja);
+  document.getElementById("incluir-fechar").addEventListener("click", fecharModalIncluirLoja);
+  document.getElementById("incluir-cancelar").addEventListener("click", fecharModalIncluirLoja);
+  document.getElementById("form-incluir-loja").addEventListener("submit", salvarInclusaoLoja);
+  document.getElementById("form-incluir-loja").addEventListener("input", () => {
+    document.getElementById("incluir-erro").textContent = "";
+  });
+  document.getElementById("modal-incluir-loja").addEventListener("click", (e) => {
+    if (e.target.id === "modal-incluir-loja") fecharModalIncluirLoja();
+  });
+  document.getElementById("incluir-gcm").addEventListener("change", (e) => {
+    const novo = document.getElementById("incluir-gcm-novo");
+    novo.classList.toggle("oculto", e.target.value !== "__outro__");
+    if (e.target.value === "__outro__") novo.focus();
+  });
+}
+
 function configurarGestaoLojas() {
   configurarEditorGcm();
   configurarReatribuirMassa();
+  configurarIncluirLoja();
 }

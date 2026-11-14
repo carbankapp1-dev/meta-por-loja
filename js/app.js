@@ -16,6 +16,7 @@ function mostrarApp(sessao) {
   }
 
   carregarLojas();
+  mostrarAba(lsGet("aba-atual", "painel") === "visitas" ? "visitas" : "painel");
 }
 
 function configurarToggleUploads() {
@@ -81,6 +82,7 @@ async function iniciar() {
   configurarBarraRolagemTopo();
   configurarFiltrosColuna();
   configurarGestaoLojas();
+  configurarVisitas();
 
   document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -94,7 +96,8 @@ async function iniciar() {
     btn.textContent = "Entrando...";
 
     try {
-      const sessao = await fazerLogin(nome, senha);
+      const lembrar = document.getElementById("login-lembrar").checked;
+      const sessao = await fazerLogin(nome, senha, lembrar);
       mostrarApp(sessao);
     } catch (err) {
       erroEl.textContent = err.message;

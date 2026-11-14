@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20261113">
+<link rel="stylesheet" href="css/style.css?v=20261114b">
 </head>
 <body>
 
@@ -35,6 +35,7 @@
       <input type="text" id="login-usuario" autocomplete="username" required>
       <label for="login-senha">Senha</label>
       <input type="password" id="login-senha" autocomplete="current-password" required>
+      <label class="login-lembrar"><input type="checkbox" id="login-lembrar"> Manter conectado neste aparelho</label>
       <button type="submit" id="btn-login">Entrar</button>
       <p id="login-erro" class="login-erro"></p>
     </form>
@@ -46,6 +47,10 @@
 
   <header class="topbar">
     <div class="topbar-titulo">Meta por <span>Loja</span></div>
+    <nav class="abas">
+      <button type="button" class="aba-btn ativa" data-aba="painel">Painel</button>
+      <button type="button" class="aba-btn" data-aba="visitas">Visitas</button>
+    </nav>
     <div class="topbar-usuario">
       <span id="usuario-info"></span>
       <span class="topbar-separador">·</span>
@@ -119,11 +124,12 @@
     </div>
 
     <div class="topbar-espaco"></div>
+    <button type="button" id="btn-incluir-loja" class="btn-incluir-loja" title="Incluir uma loja manualmente">+ Loja</button>
     <input type="text" id="filtro-busca" class="topbar-busca" placeholder="Buscar por...">
     <button id="btn-logout">Sair</button>
   </header>
 
-  <main class="tabela-area">
+  <main id="aba-painel" class="tabela-area">
     <div id="scroll-topo" class="scroll-topo">
       <div id="scroll-topo-interno" class="scroll-topo-interno"></div>
     </div>
@@ -223,6 +229,169 @@
     </div>
   </main>
 
+  <!-- ===================== ABA VISITAS ===================== -->
+  <main id="aba-visitas" class="visitas-area oculto">
+    <div class="visitas-barra">
+      <div class="visitas-periodo">
+        <label for="visitas-de">De</label>
+        <input type="date" id="visitas-de">
+        <label for="visitas-ate">Até</label>
+        <input type="date" id="visitas-ate">
+        <button type="button" id="btn-visitas-ver" class="btn-verde">Ver</button>
+      </div>
+      <div class="visitas-acoes">
+        <select id="visitas-ordem" title="Ordem das lojas dentro de cada faixa">
+          <option value="nome">Ordem: nome</option>
+          <option value="oportunidade">Ordem: oportunidade</option>
+        </select>
+        <button type="button" id="btn-gps" class="btn-escuro">Ligar GPS</button>
+        <button type="button" id="btn-atalho" class="btn-escuro">Atalho iPhone</button>
+      </div>
+      <div id="gps-status" class="gps-status">GPS desligado</div>
+    </div>
+    <div id="visitas-resumo" class="visitas-resumo"></div>
+    <div id="visitas-corpo" class="visitas-corpo"></div>
+    <p class="visitas-legenda">Quadradinhos = meta da faixa · pino = visita automática · ✓ = marcada na mão · + = marcar visita · toque na loja ou na visita para ver ou remover · Gr = gravames · Pg = pagos no mês · vermelho = atrasada</p>
+  </main>
+
+</div>
+
+<div id="visitas-aviso" class="visitas-aviso" role="status" aria-live="polite"></div>
+
+<!-- Incluir loja manualmente -->
+<div id="modal-incluir-loja" class="modal-fundo oculto">
+  <div class="modal-caixa modal-incluir">
+    <div class="modal-cabecalho">
+      <h3>Incluir loja</h3>
+      <button type="button" id="incluir-fechar" class="modal-fechar" title="Fechar">×</button>
+    </div>
+    <form id="form-incluir-loja" autocomplete="off">
+      <div class="incluir-grade">
+        <div class="incluir-campo">
+          <label for="incluir-dn">DN *</label>
+          <input type="text" id="incluir-dn" inputmode="numeric" placeholder="60904">
+        </div>
+        <div class="incluir-campo">
+          <label for="incluir-nome">Nome da loja *</label>
+          <input type="text" id="incluir-nome" placeholder="NOVA OPCAO VEICULOS">
+        </div>
+        <div class="incluir-campo incluir-cheio">
+          <label for="incluir-gcm">GCM *</label>
+          <select id="incluir-gcm"></select>
+          <input type="text" id="incluir-gcm-novo" class="oculto" placeholder="Nome do GCM, igual ao da planilha">
+          <div id="incluir-gcm-fixo" class="incluir-fixo oculto"></div>
+        </div>
+        <div class="incluir-campo incluir-cheio incluir-so-admin">
+          <label for="incluir-coordenador">Coordenador</label>
+          <input type="text" id="incluir-coordenador" placeholder="Em branco: o mesmo das lojas do GCM">
+        </div>
+        <div class="incluir-campo incluir-cheio incluir-so-admin">
+          <label for="incluir-regional">Regional</label>
+          <input type="text" id="incluir-regional" placeholder="Em branco: o mesmo das lojas do GCM">
+        </div>
+        <p class="incluir-secao incluir-cheio">Endereço (opcional, ajuda a montar o atalho do iPhone)</p>
+        <div class="incluir-par incluir-cheio">
+        <div class="incluir-campo">
+          <label for="incluir-logradouro">Rua / Avenida</label>
+          <input type="text" id="incluir-logradouro" placeholder="AVENIDA MARECHAL TITO">
+        </div>
+        <div class="incluir-campo">
+          <label for="incluir-numero">Número</label>
+          <input type="text" id="incluir-numero" placeholder="1850">
+        </div>
+        </div>
+        <div class="incluir-par incluir-cheio">
+        <div class="incluir-campo">
+          <label for="incluir-bairro">Bairro</label>
+          <input type="text" id="incluir-bairro" placeholder="SAO MIGUEL PAULISTA">
+        </div>
+        <div class="incluir-campo">
+          <label for="incluir-cep">CEP</label>
+          <input type="text" id="incluir-cep" inputmode="numeric" placeholder="08022-000">
+        </div>
+        </div>
+      </div>
+      <p id="incluir-erro" class="incluir-erro"></p>
+      <div class="modal-acoes">
+        <button type="button" id="incluir-cancelar">Cancelar</button>
+        <button type="submit" id="incluir-salvar" class="filtro-aplicar">Incluir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Detalhe da loja (aba Visitas) -->
+<div id="modal-loja" class="modal-fundo oculto">
+  <div class="modal-caixa">
+    <div class="modal-cabecalho">
+      <h3 id="loja-det-nome"></h3>
+      <button type="button" id="loja-det-fechar" class="modal-fechar" title="Fechar">×</button>
+    </div>
+    <div id="loja-det-info" class="loja-det-info"></div>
+    <div id="loja-det-visitas" class="loja-det-visitas"></div>
+    <div class="loja-det-acoes">
+      <button type="button" id="loja-det-marcar" class="btn-verde">✓ Marcar visita agora</button>
+      <button type="button" id="loja-det-salvar-pos" class="btn-escuro">📍 Estou na loja — salvar posição</button>
+      <a id="loja-det-mapa" class="btn-contorno" target="_blank" rel="noopener">Abrir no mapa</a>
+    </div>
+  </div>
+</div>
+
+<!-- Atalho do iPhone -->
+<div id="modal-atalho" class="modal-fundo oculto">
+  <div class="modal-caixa modal-atalho">
+    <div class="modal-cabecalho">
+      <h3>Atalho iPhone</h3>
+      <button type="button" id="atalho-fechar" class="modal-fechar" title="Fechar">×</button>
+    </div>
+
+    <p class="atalho-intro">O atalho marca a visita sozinho quando você chega na loja, sem abrir o site.
+      Faça estes passos <b>no iPhone</b>, com este site aberto no Safari.</p>
+
+    <h4>1. Gere a sua senha do atalho</h4>
+    <p id="atalho-token-situacao" class="atalho-pequeno"></p>
+    <button type="button" id="btn-gerar-token" class="btn-verde">Gerar senha do atalho</button>
+    <div id="atalho-token-caixa" class="atalho-copiar oculto">
+      <code id="atalho-token"></code>
+      <button type="button" data-copiar="atalho-token">Copiar</button>
+    </div>
+
+    <h4>2. Crie o atalho "Marcar visita" (uma vez só)</h4>
+    <ol>
+      <li>Abra o app <b>Atalhos</b>, aba <b>Atalhos</b>, toque em <b>+</b>.</li>
+      <li>Adicione a ação <b>Obter Localização Atual</b>.</li>
+      <li>Adicione a ação <b>Obter Conteúdo do URL</b> e cole este endereço:
+        <div class="atalho-copiar"><code id="atalho-url"></code><button type="button" data-copiar="atalho-url">Copiar</button></div>
+      </li>
+      <li>Toque na setinha da ação (<b>Mostrar Mais</b>) e ajuste:
+        <ul>
+          <li><b>Método</b>: POST</li>
+          <li><b>Cabeçalhos</b> → Adicionar novo cabeçalho: chave <code>apikey</code>, texto:
+            <div class="atalho-copiar"><code id="atalho-apikey"></code><button type="button" data-copiar="atalho-apikey">Copiar</button></div>
+          </li>
+          <li><b>Corpo da Solicitação</b>: JSON, com 3 campos:
+            <ul>
+              <li><b>Texto</b> · chave <code>p_token</code> · valor: a senha do passo 1</li>
+              <li><b>Número</b> · chave <code>p_lat</code> · valor: toque em <i>Localização Atual</i> e escolha <b>Latitude</b></li>
+              <li><b>Número</b> · chave <code>p_lon</code> · valor: <i>Localização Atual</i> → <b>Longitude</b></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Adicione a ação <b>Mostrar Notificação</b> com o <i>Conteúdo do URL</i>.</li>
+      <li>Dê o nome <b>Marcar visita</b> e salve.</li>
+      <li>Teste: dentro de uma loja, toque no atalho. Deve aparecer "Visita marcada: ...".</li>
+    </ol>
+
+    <h4>3. Crie as automações (uma por loja ou grupo de lojas vizinhas)</h4>
+    <ol>
+      <li>No app Atalhos, aba <b>Automação</b>, toque em <b>+</b> e escolha <b>Chegar</b>.</li>
+      <li>Em <b>Local</b>, busque o endereço da loja (fica no detalhe da loja, aba Visitas) e deixe o raio no menor tamanho.</li>
+      <li>Marque <b>Executar Imediatamente</b> e escolha o atalho <b>Marcar visita</b>.</li>
+    </ol>
+    <p class="atalho-pequeno">O site decide qual é a loja pela sua posição exata (até 30 m) e marca só a mais próxima,
+      uma vez por dia. Lojas vizinhas podem usar a mesma automação. Se uma visita escapar, marque na aba Visitas.</p>
+  </div>
 </div>
 
 <!-- Painel de filtro compartilhado (estilo Excel), reaproveitado para qualquer coluna -->
@@ -283,14 +452,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/config.js?v=20261113"></script>
-<script src="js/supabaseClient.js?v=20261113"></script>
-<script src="js/parse.js?v=20261113"></script>
-<script src="js/auth.js?v=20261113"></script>
-<script src="js/filtros.js?v=20261113"></script>
-<script src="js/dashboard.js?v=20261113"></script>
-<script src="js/gestao.js?v=20261113"></script>
-<script src="js/uploads.js?v=20261113"></script>
-<script src="js/app.js?v=20261113"></script>
+<script src="js/config.js?v=20261114b"></script>
+<script src="js/supabaseClient.js?v=20261114b"></script>
+<script src="js/parse.js?v=20261114b"></script>
+<script src="js/auth.js?v=20261114b"></script>
+<script src="js/filtros.js?v=20261114b"></script>
+<script src="js/dashboard.js?v=20261114b"></script>
+<script src="js/gestao.js?v=20261114b"></script>
+<script src="js/uploads.js?v=20261114b"></script>
+<script src="js/visitas.js?v=20261114b"></script>
+<script src="js/app.js?v=20261114b"></script>
 </body>
 </html>

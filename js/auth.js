@@ -1,27 +1,36 @@
 // ==========================================================================
 // Autenticação simples (usuário/senha validados via RPC no Supabase)
-// A sessão fica em sessionStorage: some ao fechar a aba, por segurança.
+// A sessão fica em sessionStorage (some ao fechar a aba). Se o usuário marcar
+// "Manter conectado neste aparelho", fica em localStorage (para o app na tela
+// inicial do iPhone não pedir login toda vez).
 // ==========================================================================
 
 const SESSAO_CHAVE = "painel_gcm_sessao";
 
 function getSessao() {
   try {
-    return JSON.parse(sessionStorage.getItem(SESSAO_CHAVE) || "null");
+    return JSON.parse(sessionStorage.getItem(SESSAO_CHAVE) || localStorage.getItem(SESSAO_CHAVE) || "null");
   } catch {
     return null;
   }
 }
 
-function salvarSessao(sessao) {
-  sessionStorage.setItem(SESSAO_CHAVE, JSON.stringify(sessao));
+function salvarSessao(sessao, lembrar = false) {
+  try {
+    sessionStorage.setItem(SESSAO_CHAVE, JSON.stringify(sessao));
+    if (lembrar) localStorage.setItem(SESSAO_CHAVE, JSON.stringify(sessao));
+    else localStorage.removeItem(SESSAO_CHAVE);
+  } catch { /* navegador sem armazenamento: a sessão vale só nesta página */ }
 }
 
 function limparSessao() {
-  sessionStorage.removeItem(SESSAO_CHAVE);
+  try {
+    sessionStorage.removeItem(SESSAO_CHAVE);
+    localStorage.removeItem(SESSAO_CHAVE);
+  } catch { /* nada a limpar */ }
 }
 
-async function fazerLogin(nome, senha) {
+async function fazerLogin(nome, senha, lembrar = false) {
   const { data, error } = await supabaseClient.rpc("fn_login", {
     p_nome: nome,
     p_senha: senha,
@@ -37,7 +46,7 @@ async function fazerLogin(nome, senha) {
     perfil: usuario.perfil,
     nome_referencia: usuario.nome_referencia,
   };
-  salvarSessao(sessao);
+  salvarSessao(sessao, lembrar);
   return sessao;
 }
 

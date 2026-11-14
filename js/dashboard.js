@@ -152,13 +152,14 @@ function renderizarTabela(lojas) {
 
   const sessao = getSessao();
   const podeGerenciar = ["admin", "coordenador", "regional"].includes(sessao.perfil);
+  const podeExcluir = true; // qualquer perfil; o banco confere se a loja é da carteira
 
   corpo.innerHTML = lojas.map((l) => `
     <tr data-dn="${l.dn}" class="${classeLinha(l)}">
       <td class="col-fixa col-dn${planilhasFaltando(l).length ? " fora-planilha" : ""}"${tituloFora(planilhasFaltando(l))}>${l.dn}</td>
       <td class="col-fixa col-nome celula-gerenciavel">
         <span class="texto-truncado" title="${escapeHtml(l.nome_loja)}">${escapeHtml(l.nome_loja)}</span>
-        ${podeGerenciar ? `<button type="button" class="icone-excluir" data-dn="${l.dn}" title="Excluir loja">×</button>` : ""}
+        ${podeExcluir ? `<button type="button" class="icone-excluir" data-dn="${l.dn}" title="Excluir loja">×</button>` : ""}
       </td>
       <td class="col-gcm celula-gerenciavel">
         <span class="texto-truncado" title="${escapeHtml(l.gcm || "")}">${escapeHtml(truncarTexto(l.gcm, 25))}</span>
@@ -191,6 +192,8 @@ function renderizarTabela(lojas) {
         abrirEditorGcm(parseInt(botao.dataset.dn, 10), botao);
       });
     });
+  }
+  if (podeExcluir) {
     corpo.querySelectorAll(".icone-excluir").forEach((botao) => {
       botao.addEventListener("click", (e) => {
         e.stopPropagation();
